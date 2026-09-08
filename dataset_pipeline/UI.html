@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NYC Selector</title>
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+  <style>
+    html, body { margin:0; height:100%; font-family: Arial; }
+    .app { display:grid; grid-template-columns:340px 1fr; height:100vh; }
+    .panel { padding:15px; background:#fff; overflow:auto; }
+    #map { height:100%; }
+    .box { border:1px solid #ddd; padding:10px; border-radius:10px; margin-top:10px; }
+    button { padding:8px 12px; margin-top:8px; margin-right:6px; cursor:pointer; }
+    pre { white-space:pre-wrap; word-break:break-word; background:#0b1220; color:#e5eefc; padding:12px; border-radius:10px; }
+  </style>
+</head>
+<body>
+<div class="app">
+
+<div class="panel">
+<h2>NYC Selector</h2>
+
+<div class="box">
+<strong>Hover</strong><br>
+Borough: <span id="hover-boro">-</span><br>
+Neighborhood: <span id="hover-nta">-</span>
+</div>
+
+<div class="box">
+<strong>Selected Borough:</strong><br>
+<span id="selected-boro">None</span>
+</div>
+
+<div class="box">
+<strong>Selected Neighborhoods:</strong>
+<div id="list">None</div>
+</div>
+
+<button id="via-btn">Via</button>
+<button onclick="resetAll()">Reset</button>
+
+<div class="box">
+  <strong>Status:</strong>
+  <div id="status">Idle</div>
+</div>
+
+<pre id="output"></pre>
+</div>
+
+<div id="map"></div>
+
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const map = L.map('map').setView([40.7128,-74.006],10);///impostazione mappa
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '&copy; OpenStreetMap contributors'
+}).addTo(map);
+
+let selectedBorough = null;
+let selectedNeighborhoods = [];
+let hoveredBorough = null;
+let hoveredNeighborhood = null;
+let layer;
+
+function getBoro(f){ return f.properties.boroname; }
+function getNTA(f){ return f.properties.ntaname; }
+
+function style(f){
+  const b = getBoro(f);
+  const n = getNTA(f);
+
+  const isSelectedNeighborhood = selectedNeighborhoods.includes(n);
+  const isHoveredNeighborhood = hoveredNeighborhood === n && hoveredBorough === b;
+  const isHoveredBorough = !selectedBorough && hoveredBorough === b;
+
+  if (isSelectedNeighborhood) {
+    return { color:'red', weight:2, fillColor:'red', fillOpacity:0.35 };
+  }
+
+  if (isHoveredNeighborhood || isHoveredBorough) {
+    return { color:'#2563eb', weight:2.5, fillColor:'#60a5fa', fillOpacity:0.25 };
+  }
+
+  if (selectedBorough && b !== selectedBorough) {
+    return { color:'#aaa', weight:1, fillColor:'#ccc', fillOpacity:0.03 };
+  }
+
+  return { color:'#333', weight:1, fillColor:'#94a3b8', fillOpacity:0.08 };
+}
+
+function updateUI(){
+  document.getElementById('selected-boro').innerText = selectedBorough || 'None';
+  document.getElementById('list').innerText = selectedNeighborhoods.length ? selectedNeighborhoods.join(', ') : 'None';
+  document.getElementById('output').innerText = JSON.stringify({
+    borough: selectedBorough,
+    neighborhoods: selectedNeighborhoods
+  }, null, 2);
+}
+
+function resetAll(){
+  selectedBorough = null;
+  selectedNeighborhoods = [];
+  hoveredBorough = null;
+  hoveredNeighborhood = null;
+  document.getElementById('hover-boro').innerText = '-';
+  document.getElementById('hover-nta').innerText = '-';
+  document.getElementById('status').innerText = 'Idle';
+  if (layer) { layer.setStyle(style); }
+  map.setView([40.7128, -74.006], 10);
+  updateUI();
+}
+
+fetch('rawdata/nyc_neighborhoods.geojson')
+.then(r => r.json())
+.then(data => {
+  layer = L.geoJSON(data, {
+    style: style,
+    onEachFeature: (f, l) => {
+      l.on('mouseover', () => {
+        hoveredBorough = getBoro(f);
+        hoveredNeighborhood = getNTA(f);
+        document.getElementById('hover-boro').innerText = hoveredBorough;
+        document.getElementById('hover-nta').innerText = hoveredNeighborhood;
+        layer.setStyle(style);
+      });
+
+      l.on('mouseout', () => {
+        hoveredBorough = null;
+        hoveredNeighborhood = null;
+        document.getElementById('hover-boro').innerText = '-';
+        document.getElementById('hover-nta').innerText = '-';
+        layer.setStyle(style);
+      });
+
+      l.on('click', () => {
+        const b = getBoro(f);
+        const n = getNTA(f);
+
+        if (!selectedBorough) {
+          selectedBorough = b;
+          const view = {
+            "Manhattan": { center: [40.7831, -73.9712], zoom: 12 },
+            "Brooklyn": { center: [40.6782, -73.9442], zoom: 12 },
+            "Queens": { center: [40.7282, -73.7949], zoom: 12 },
+            "Bronx": { center: [40.8448, -73.8648], zoom: 12 },
+            "Staten Island": { center: [40.5795, -74.1502], zoom: 12 }
+          };
+          if (view[b]) map.setView(view[b].center, view[b].zoom);
+        } else if (b === selectedBorough) {
+          if (selectedNeighborhoods.includes(n)) {
+            selectedNeighborhoods = selectedNeighborhoods.filter(x => x !== n);
+          } else {
+            selectedNeighborhoods.push(n);
+          }
+
+          if (selectedNeighborhoods.length === 0) {
+            selectedBorough = null;
+            map.setView([40.7128, -74.006], 10);
+          }
+        }
+
+        layer.setStyle(style);
+        updateUI();
+      });
+    }
+  }).addTo(map);
+
+  updateUI();
+})
+.catch(err => {
+  document.getElementById('status').innerText = 'Errore caricamento GeoJSON quartieri';
+  console.error(err);
+});
+
+document.getElementById('via-btn').addEventListener('click', async () => {
+  const payload = { borough: selectedBorough, neighborhoods: selectedNeighborhoods };
+
+  if (!payload.borough) {
+    document.getElementById('status').innerText = 'Seleziona prima un borough';
+    return;
+  }
+  if (!payload.neighborhoods.length) {
+    document.getElementById('status').innerText = 'Seleziona almeno un quartiere';
+    return;
+  }
+
+  document.getElementById('status').innerText = 'Invio al backend Python...';
+
+  try {
+    const response = await fetch('http://127.0.0.1:5000/filter', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || 'Errore backend');
+
+    document.getElementById('status').innerText = 'Filtro completato';
+    document.getElementById('output').innerText = JSON.stringify(result, null, 2);
+  } catch (err) {
+    document.getElementById('status').innerText = 'Errore collegamento Python';
+    alert('Errore: ' + err.message);
+  }
+});
+</script>
+</body>
+</html>

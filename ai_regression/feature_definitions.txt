@@ -1,0 +1,89 @@
+Normalized feature definitions used in the regression models
+========================================================
+
+1. a1_Floors_norm
+What it is:
+- Normalized number of floors / building verticality.
+How it was obtained:
+- Raw source: raw_numfloors, taken from numfloors.
+- Computation: min-max normalization over the working dataset.
+
+2. a2_RoadToDeliveryDistance_norm
+What it is:
+- Normalized road-to-delivery distance proxy.
+How it was obtained:
+- Raw source: building_to_street_distance, created by matching each building delivery point to the nearest street-context geometry.
+- Computation: min-max normalization of building_to_street_distance.
+
+3. ShapePenalty_norm
+What it is:
+- Building shape penalty / elongation proxy.
+How it was obtained:
+- Raw source: building footprint geometry.
+- Computation:
+  - compute the minimum rotated rectangle of the building polygon
+  - extract long axis and short axis
+  - calculate 1 - (short_axis / long_axis)
+  - clip to [0,1]
+
+4. BuildingTypePenalty_norm
+What it is:
+- Rule-based building type difficulty score.
+How it was obtained:
+- Raw source: landuse
+- Computation:
+  - landuse 4,5 -> 0.00 (mixed commercial)
+  - landuse 1,2,3 -> 0.33 (residential)
+  - landuse 6,7 -> 0.66 (industrial / utility)
+  - all other / fallback -> 1.00 (public / other)
+
+5. b1_Population_norm
+What it is:
+- Normalized neighborhood population intensity proxy.
+How it was obtained:
+- Raw source: population_clean, from the joined population dataset via nta_key, with borough mean fallback when neighborhood population is missing.
+- Computation: min-max normalization of population_clean.
+
+6. b2_PedestrianPresence_norm
+What it is:
+- Pedestrian presence / corridor importance proxy.
+How it was obtained:
+- Raw source: ped_category from pedestrian mobility data.
+- Computation:
+  - category-to-score mapping:
+    baseline street -> 0.00
+    community connector -> 0.25
+    neighborhood corridor -> 0.50
+    regional corridor -> 0.75
+    global corridor -> 1.00
+  - with numeric fallback where needed
+
+7. b3_UrbanActivity_norm
+What it is:
+- Urban activity proxy based on building land use.
+How it was obtained:
+- Raw source: landuse
+- Computation:
+  - rule-based mapping from land-use code to activity score
+  - example:
+    4 -> 0.90
+    5 -> 1.00
+    6 -> 0.80
+    9 -> 0.20
+    10/11 -> 0.10
+
+8. CurbCrowdingPenalty
+What it is:
+- Curbside difficulty proxy used in the car regression.
+How it was obtained:
+- Raw ingredients:
+  - raw_n_active_meters
+  - raw_n_regulation_signs
+  - raw_bf_vehicle_ty
+- Intermediate computations:
+  - ParkingScarcity_advantage = inverse min-max normalization of raw_n_active_meters
+  - CurbRestriction_advantage = min-max normalization of raw_n_regulation_signs
+  - CommercialCurbContext = 1 if vehicle type suggests commercial/truck context, else 0
+- Final computation:
+  - raw_curb_crowding_sum = ParkingScarcity_advantage + CurbRestriction_advantage + CommercialCurbContext
+  - CurbCrowdingPenalty = raw_curb_crowding_sum / 3

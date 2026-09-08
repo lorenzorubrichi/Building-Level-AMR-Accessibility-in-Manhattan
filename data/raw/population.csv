@@ -1,0 +1,51 @@
+borough,year,fips_county_code,nta_code,nta_name,nta_key,population
+Bronx,2000,5,BX01,Claremont-Bathgate,claremontbathgate,28.149
+Bronx,2000,5,BX03,Eastchester-Edenwald-Baychester,eastchesteredenwaldbaychester,35.422
+Bronx,2000,5,BX05,Bedford Park-Fordham North,bedfordparkfordhamnorth,55.329
+Bronx,2000,5,BX06,Belmont,belmont,25.967
+Bronx,2000,5,BX07,Bronxdale,bronxdale,34.309
+Bronx,2000,5,BX08,West Farms-Bronx River,westfarmsbronxriver,34.542
+Bronx,2000,5,BX09,Soundview-Castle Hill-Clason Point-Harding Park,soundviewcastlehillclasonpointhardingpark,50.753
+Bronx,2000,5,BX10,Pelham Bay-Country Club-City Island,pelhambaycountryclubcityisland,27.14
+Bronx,2000,5,BX13,Co-Op City,coopcity,40.676
+Bronx,2000,5,BX14,East Concourse-Concourse Village,eastconcourseconcoursevillage,58.961
+Bronx,2000,5,BX17,East Tremont,easttremont,39.28
+Bronx,2000,5,BX22,North Riverdale-Fieldston-Riverdale,northriverdalefieldstonriverdale,28.013
+Bronx,2000,5,BX26,Highbridge,highbridge,33.844
+Bronx,2000,5,BX27,Hunts Point,huntspoint,25.142
+Bronx,2000,5,BX28,Van Cortlandt Village,vancortlandtvillage,50.607
+Bronx,2000,5,BX29,Spuyten Duyvil-Kingsbridge,spuytenduyvilkingsbridge,29.872
+Bronx,2000,5,BX30,Kingsbridge Heights,kingsbridgeheights,33.286
+Bronx,2000,5,BX31,Allerton-Pelham Gardens,allertonpelhamgardens,28.51
+Bronx,2000,5,BX33,Longwood,longwood,23.082
+Bronx,2000,5,BX34,Melrose South-Mott Haven North,melrosesouthmotthavennorth,33.195
+Bronx,2000,5,BX35,Morrisania-Melrose,morrisaniamelrose,29.797
+Bronx,2000,5,BX36,University Heights-Morris Heights,universityheightsmorrisheights,54.335
+Bronx,2000,5,BX37,Van Nest-Morris Park-Westchester Square,vannestmorrisparkwestchestersquare,27.135
+Bronx,2000,5,BX39,Mott Haven-Port Morris,motthavenportmorris,49.03
+Bronx,2000,5,BX40,Fordham South,fordhamsouth,26.88
+Bronx,2000,5,BX41,Mount Hope,mounthope,52.649
+Bronx,2000,5,BX43,Norwood,norwood,40.817
+Bronx,2000,5,BX44,Williamsbridge-Olinville,williamsbridgeolinville,57.42
+Bronx,2000,5,BX46,Parkchester,parkchester,29.353
+Bronx,2000,5,BX49,Pelham Parkway,pelhamparkway,30.006
+Bronx,2000,5,BX52,Schuylerville-Throgs Neck-Edgewater Park,schuylervillethrogsneckedgewaterpark,43.712
+Bronx,2000,5,BX55,Soundview-Bruckner,soundviewbruckner,35.137
+Bronx,2000,5,BX59,Westchester-Unionport,westchesterunionport,25.768
+Bronx,2000,5,BX62,Woodlawn-Wakefield,woodlawnwakefield,43.583
+Bronx,2000,5,BX63,West Concourse,westconcourse,39.557
+Bronx,2000,5,BX75,Crotona Park East,crotonaparkeast,18.072
+Bronx,2000,5,BX98,Rikers Island,rikersisland,12.78
+Bronx,2000,5,BX99,park-cemetery-etc-Bronx,parkcemeteryetcbronx,540.0
+Brooklyn,2000,47,BK09,Brooklyn Heights-Cobble Hill,brooklynheightscobblehill,22.548
+Brooklyn,2000,47,BK17,Sheepshead Bay-Gerritsen Beach-Manhattn Bch,sheepsheadbaygerritsenbeachmanhattnbch,64.596
+Brooklyn,2000,47,BK19,Brighton Beach,brightonbeach,35.244
+Brooklyn,2000,47,BK21,Seagate-Coney Island,seagateconeyisland,34.267
+Brooklyn,2000,47,BK23,West Brighton,westbrighton,17.37
+Brooklyn,2000,47,BK25,Homecrest,homecrest,45.679
+Brooklyn,2000,47,BK26,Gravesend,gravesend,29.257
+Brooklyn,2000,47,BK27,Bath Beach,bathbeach,28.572
+Brooklyn,2000,47,BK28,Bensonhurst West,bensonhurstwest,84.64
+Brooklyn,2000,47,BK29,Bensonhurst East,bensonhursteast,58.566
+Brooklyn,2000,47,BK30,Dyker Heights,dykerheights,39.332
+Brooklyn,2000,47,BK31,Bay Ridge,bayridge,80.539

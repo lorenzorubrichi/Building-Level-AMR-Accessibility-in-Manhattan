@@ -1,0 +1,33 @@
+dataset,order,column,description
+base,1,borough,New York City borough in which the building is located.
+base,2,neighborhood,Neighborhood associated with the building.
+base,3,bin,Building Identification Number; unique building-level identifier.
+base,4,height_roof,Roof height of the building.
+base,5,numfloors,Original number of floors from the source dataset.
+base,6,landuse_x,Land-use code from a first merge/source table. Code mapping: 01 = One & Two Family Buildings; 02 = Multi-Family Walk-Up Buildings; 03 = Multi-Family Elevator Buildings; 04 = Mixed Residential & Commercial Buildings; 05 = Commercial & Office Buildings; 06 = Industrial & Manufacturing; 07 = Transportation & Utility; 08 = Public Facilities & Institutions; 09 = Open Space & Outdoor Recreation; 10 = Parking Facilities; 11 = Vacant Land.
+base,7,bldgclass,"Building class / building typology code from NYC DOF / PLUTO. See the 'Code Mappings' sheet for detailed code meanings (e.g., A4, C6, O5, D4)."
+base,8,centroid_lon,Longitude of the building centroid.
+base,9,centroid_lat,Latitude of the building centroid.
+base,10,address_lon,Longitude of the address point.
+base,11,address_lat,Latitude of the address point.
+base,12,distance_to_sidewalk_m,"Distance from the building-related point to the nearest sidewalk, in meters."
+base,13,building_floor_count_norm_x_R,Normalized number of floors; proxy for building verticality.
+base,14,road_to_delivery_distance_norm_x_R,Normalized road-to-delivery distance; proxy for curb-to-dropoff separation.
+base,15,building_shape_complexity_norm_x_R,"Normalized proxy for building shape complexity / elongation. Computed from building geometry, typically using a shape ratio / elongation measure and normalized to [0,1], where higher values indicate more elongated or complex footprints."
+base,16,building_landuse_access_penalty_norm_x_R,"Normalized access-difficulty penalty derived from building land use. Mapping used: land use 4 or 5 -> 0.00; land use 1, 2, or 3 -> 0.33; land use 6 or 7 -> 0.66; other / fallback classes -> 1.00."
+base,17,neighborhood_population_intensity_norm_R,Normalized proxy for neighborhood population intensity.
+base,18,pedestrian_corridor_presence_norm_R,Normalized pedestrian corridor / pedestrian presence indicator. Mapping used: baseline street -> 0.00; community connector -> 0.25; neighborhood corridor -> 0.50; regional corridor -> 0.75; global corridor -> 1.00.
+base,19,urban_activity_landuse_norm,Proxy for surrounding urban activity derived from land use. Mapping used: land use 1 -> 0.30; 2 -> 0.45; 3 -> 0.50; 4 -> 0.90; 5 -> 1.00; 6 -> 0.80; 7 -> 0.70; 8 -> 0.75; 9 -> 0.20; 10 or 11 -> 0.10.
+base,20,low_pedestrian_presence_penalty,Penalty associated with low pedestrian presence. Computed as 1 - pedestrian_corridor_presence_norm_R. Example mapping: baseline street -> 1.00; community connector -> 0.75; neighborhood corridor -> 0.50; regional corridor -> 0.25; global corridor -> 0.00.
+base,21,sidewalk_absence_penalty,Penalty indicating missing or weak sidewalk accessibility. Mapping: sidewalk reachable / present = 0; sidewalk absent or not reachable = 1.
+base,22,active_parking_meter_count,Count of active parking meters in the building's curb context.
+base,23,parking_meter_scarcity_penalty,"Penalty / scarcity proxy derived from parking meter availability. Built through inverse normalization: fewer active meters correspond to higher scarcity penalty, while more active meters correspond to lower scarcity penalty."
+base,24,curb_restriction_sign_count,Count of curb regulation signs in the surrounding context.
+base,25,curb_restriction_intensity_norm,Normalized intensity of curb restrictions. Higher values indicate a stronger concentration of curb regulation signs.
+base,26,raw_bf_vehicle_ty,Vehicle-type or blockface context attribute from the curb dataset.
+base,27,commercial_or_truck_curb_context_flag,Flag indicating commercial or truck-oriented curb context. Mapping: commercial / truck-related context = 1; otherwise = 0.
+base,28,parking_lane_count,Number of parking lanes associated with the nearby street segment.
+base,29,curb_difficulty_component_sum,Sum of the raw curb-difficulty components.
+base,30,curb_parking_difficulty_penalty_R,"Final curb/parking difficulty proxy used in the car regression. Computed as the average of three components: parking-meter scarcity penalty, curb-restriction intensity, and commercial/truck curb-context flag; higher values indicate more difficult curbside conditions."
+base,31,predicted_car_last_meter_time_s,Predicted car last-meter delivery time in seconds.
+base,32,predicted_amr_last_meter_time_s,Predicted AMR last-meter delivery time in seconds.

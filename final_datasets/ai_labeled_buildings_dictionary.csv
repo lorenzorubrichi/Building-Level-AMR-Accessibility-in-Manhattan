@@ -1,0 +1,25 @@
+column,legacy_name,description
+borough,,
+neighborhood,,
+bin,,
+numfloors,,
+house_number,,
+street_name,,
+full_street_name,,
+zipcode,,
+full_address,,
+streetview_image_usable_flag,image_usable,AI-derived quality flag for whether the image is usable for entrance assessment.
+streetview_stairs_detected,stairs_present,Raw AI-derived indicator for visible stairs at or near the entrance.
+streetview_gate_detected,gate_present,Raw AI-derived indicator for visible gate/fence/barrier at or near the entrance.
+streetview_ramp_or_barrier_detected,ramp_present,Raw AI-derived indicator for ramp or ramp-like access barrier.
+streetview_amr_can_reach_door_flag,amr_can_reach_door,"AI-derived assessment of whether an AMR can plausibly reach the door. Used for segmentation/filtering, not as a direct regression input."
+car_ai_penalty_s,,
+car_streetview_stairs_present_R,ai_stairs_present_car,Car AI-informed regression feature: visible stairs.
+car_streetview_gate_present_R,ai_gate_present_car,Car AI-informed regression feature: visible gate/fence/barrier.
+car_streetview_ramp_or_barrier_present_R,ai_ramp_present_car,Car AI-informed regression feature: ramp or ramp-like access barrier.
+car_streetview_access_barrier_score_R,ai_access_barrier_mean_car,Car AI-informed regression feature: average access-barrier score.
+amr_streetview_stairs_present_R,ai_stairs_present_amr,AMR AI-informed regression feature: visible stairs.
+amr_streetview_gate_present_R,ai_gate_present_amr,AMR AI-informed regression feature: visible gate/fence/barrier.
+amr_streetview_ramp_or_barrier_present_R,ai_ramp_present_amr,AMR AI-informed regression feature: ramp or ramp-like access barrier.
+amr_streetview_access_barrier_score_R,ai_access_barrier_mean_amr,AMR AI-informed regression feature: average access-barrier score.
+streetview_access_barrier_score_R,ai_access_barrier_mean,AI-informed regression feature: average of selected access-barrier indicators.
