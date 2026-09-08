@@ -1,6 +1,6 @@
 # Building-Level AMR Accessibility in Manhattan
 
-This repository contains the code and GitHub-safe datasets used to build a
+This repository contains the code and datasets used to build a
 building-level last-meter accessibility dataset and estimate autonomous mobile
 robot (AMR) accessibility for buildings in Manhattan, New York City.
 
