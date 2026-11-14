@@ -4,7 +4,20 @@ Dataset and code accompanying the Data Descriptor *"A building-level dataset of
 entrance accessibility for sidewalk delivery robots in Manhattan"*.
 
 **Data Records:** https://doi.org/10.5281/zenodo.24217751 (CC BY 4.0)  
-**Code archive:** https://doi.org/10.5281/zenodo.24218565 (MIT)
+**Code archive:** https://doi.org/10.5281/zenodo.24218565 (MIT), identical to GitHub release `v1.0.0`
+
+> **Reviewer quick start.** To check the article, use the versioned code archive on Zenodo
+> (or GitHub release `v1.0.0`), not the current state of the main branch. No API key is needed:
+>
+> ```bash
+> # unzip the code archive, then from its root folder:
+> python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
+> pip install -r requirements.txt                      # pinned versions, Python 3.13
+> python run_all.py analysis                           # about 5 minutes (indicative)
+> python run_all.py test                               # 18 checks; all must pass
+> ```
+>
+> Every number and table of the article is then in `manuscript/generated/`.
 
 The dataset contains three linked layers, all keyed by the Building Identification Number (BIN):
 
@@ -17,9 +30,18 @@ The dataset contains three linked layers, all keyed by the Building Identificati
    provided: the primary index (labels after the human review of gates and ramps) and an
    AI-only index (labels exactly as produced by the AI).
 
-Everything needed to use and reproduce the data is in this repository. No API key and
-no file outside the repository is needed, except for the optional acquisition steps
-described in the last section.
+What can be checked from the public files alone, without any API key:
+
+| Level | What you can do | How |
+|---|---|---|
+| 1. Use | Read and join the data records and their dictionaries, without running code | Section 1 |
+| 2. Reproduce the analysis | Recompute the models, the validation, the figures and every number of the article from the published records and annotations | `python run_all.py analysis` (section 2) |
+| 3. Rebuild the building table | Rebuild `manhattan_buildings.csv` from the deposited NYC Open Data snapshot and re-apply the human review to the published labels | `python run_all.py records` (section 2) |
+
+Not possible from the public files: repeating the original Street View acquisition and AI
+annotation exactly. Rebuilding the label table from the original acquisition logs needs the
+authors' private files (they contain API credentials), and new requests with your own keys
+may return newer panoramas and different model answers (section 6).
 
 Licences: code MIT (`LICENSE`), data CC BY 4.0 (`LICENSE-DATA`).
 
@@ -69,7 +91,12 @@ are enough to request them again with your own Google API key.
 
 ## 2. I want to reproduce the results
 
-Requirements: Python 3.11 or later (tested with 3.13). About 3 minutes on a laptop.
+To check the article, start from the Zenodo code archive or release `v1.0.0` (see the quick start
+above). Cloning the main branch gives the latest version, which may differ.
+
+Reference environment: Python 3.13 with the versions pinned in `requirements.txt`
+(Python 3.11 or later should work). The analysis takes about 5 minutes on a 2-core machine;
+this is indicative and depends on the hardware, mostly because of the 200 bootstrap refits.
 
 ```bash
 git clone https://github.com/lorenzorubrichi/Building-Level-AMR-Accessibility-in-Manhattan.git
@@ -95,8 +122,17 @@ What `python run_all.py analysis` does and writes:
 | Figures | `12_figures.py` | `results/figures/*.pdf, *.png` |
 | Numbers and tables used in the manuscript | `13_manuscript_numbers.py` | `manuscript/generated/*.tex` |
 
-The pipeline is deterministic: running it again reproduces the published
-`amr_accessibility_predictions.csv` bit for bit.
+The pipeline is deterministic: with the pinned versions in `requirements.txt`, running it
+again from a fresh copy of the code archive reproduces the published records and every number
+in `manuscript/generated/` exactly. Other library versions may change the last digits.
+
+**Why `feature_set_comparison.csv` shows a different ROC AUC from the article.** For the
+leave-one-area-out schemes this file computes one ROC AUC on the pooled out-of-fold predictions
+of all held-out areas (for example 0.889 for leave-one-neighbourhood-out, primary label).
+The article (Table of cross-validation results, `results/model/metrics.json`) computes the
+ROC AUC within each held-out area and reports the mean weighted by the number of buildings
+(0.831). Both are correct; pooling mixes areas with different shares of accessible buildings,
+which can raise the AUC. The comparison file is used only to choose between the two predictor sets.
 
 ### Rebuild the building table from the original NYC data
 
@@ -159,7 +195,7 @@ environment variables point elsewhere: `AMR_RAW_DIR` for full raw downloads and
   It agrees with `accessible_rule_ai` on 91 % of images (κ = 0.82).
 * **`p_accessible` / `amr_index`** (primary index): logistic regression on non-visual attributes,
   trained on `accessible_rule`. **`p_accessible_ai_only` / `amr_index_ai_only`**: the same
-  model trained on `accessible_rule_ai` (identical to the index of release v1.0).
+  model trained on `accessible_rule_ai` (identical to the index of the first public version, see `docs/CHANGES_FROM_V0.md`).
   Use the primary index unless you specifically want a purely automatic pipeline.
   To compare predictions with labels, use the out-of-fold columns (`p_accessible_oof`,
   `p_accessible_ai_only_oof`). `in_domain = False` marks buildings outside the labelled
@@ -183,7 +219,7 @@ Brier −0.022 (−0.037 to −0.008). Source: `results/validation/human_validat
 * All PLUTO fields describe the tax lot, not the single building (see `n_buildings_on_lot`).
 * Human validation (`results/validation/human_validation.json`, reproducible with
   `python validation_kit/02_score_annotations.py`): agreement of the AI with a human annotator is
-  at human level for stairs (κ = 0.78 vs 0.76 between two humans). **The AI over-reports gates**
+  at human level for stairs (κ = 0.78 vs 0.75 between two humans). **The AI over-reports gates**
   (κ = 0.29, precision 0.29; humans agree with each other, κ = 0.86) **and ramps** (precision 0.09).
   This motivated the targeted review: only 21 % of the AI-reported gates and 3 % of the ramps were
   confirmed. Two reviewers agreed on gates on 93 % of the 230 images both could judge (κ = 0.79).
