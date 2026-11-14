@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Entrance accessibility – blind annotation</title>
+<style>
+  :root { --bg:#fafafa; --fg:#1d1d1f; --mute:#6e6e73; --line:#d2d2d7; --acc:#0b57d0; --ok:#1e7e34; --no:#b3261e; }
+  * { box-sizing: border-box; }
+  body { margin:0; font:15px/1.45 system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background:var(--bg); color:var(--fg); }
+  header { padding:12px 20px; border-bottom:1px solid var(--line); display:flex; gap:16px; align-items:center; flex-wrap:wrap; background:#fff; }
+  header h1 { font-size:16px; margin:0 12px 0 0; }
+  main { display:grid; grid-template-columns: minmax(0,1fr) 380px; gap:20px; padding:20px; }
+  #imgbox { background:#000; display:flex; align-items:center; justify-content:center; min-height:480px; border-radius:6px; overflow:hidden; }
+  #imgbox img { max-width:100%; max-height:78vh; image-rendering:auto; }
+  #panel { background:#fff; border:1px solid var(--line); border-radius:6px; padding:16px; }
+  .q { margin:0 0 14px; }
+  .q p { margin:0 0 6px; font-weight:600; }
+  .q small { color:var(--mute); font-weight:400; display:block; }
+  .opts { display:flex; gap:6px; flex-wrap:wrap; }
+  .opts button { border:1px solid var(--line); background:#fff; padding:6px 12px; border-radius:4px; cursor:pointer; font:inherit; }
+  .opts button.sel { background:var(--acc); color:#fff; border-color:var(--acc); }
+  .disabled { opacity:.35; pointer-events:none; }
+  textarea, select, input[type=text] { width:100%; font:inherit; padding:6px; border:1px solid var(--line); border-radius:4px; }
+  .nav { display:flex; gap:8px; margin-top:12px; }
+  .nav button, header button, header label.btn { border:1px solid var(--line); background:#fff; padding:7px 14px; border-radius:4px; cursor:pointer; font:inherit; }
+  .primary { background:var(--acc)!important; color:#fff; border-color:var(--acc)!important; }
+  #status { color:var(--mute); font-size:13px; }
+  #progress { font-variant-numeric: tabular-nums; }
+  .warn { color:var(--no); }
+  kbd { border:1px solid var(--line); border-bottom-width:2px; border-radius:3px; padding:0 4px; font-size:12px; background:#fff; }
+  details { margin-top:14px; color:var(--mute); font-size:13px; }
+  input[type=file] { display:none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Entrance accessibility – blind annotation</h1>
+  <input id="annot" type="text" placeholder="Annotator ID (e.g. A1)" style="width:170px">
+  <label class="btn">1. Task list (.csv)<input id="tasks" type="file" accept=".csv"></label>
+  <label class="btn">2. Image folder<input id="imgs" type="file" webkitdirectory multiple></label>
+  <button id="export" class="primary">Export annotations (.csv)</button>
+  <span id="progress"></span>
+  <span id="status"></span>
+</header>
+<main>
+  <div>
+    <div id="imgbox"><span style="color:#aaa">Load the task list and the image folder to start.</span></div>
+    <div id="taskinfo" style="color:var(--mute);margin-top:6px"></div>
+  </div>
+  <div id="panel">
+    <div class="q"><p>Q0 · Can the entrance of the target building be judged? <small>Target = building facing the camera at the image centre.</small></p>
+      <div class="opts" data-q="usable"><button data-v="yes">Yes <kbd>1</kbd></button><button data-v="no">No <kbd>2</kbd></button></div></div>
+    <div class="q" id="reasonBox"><p>If no, why?</p>
+      <select id="reason"><option value="">–</option><option>entrance_not_visible</option><option>occluded</option><option>camera_inside_or_through_window</option><option>target_building_ambiguous</option><option>image_blank_or_corrupt</option></select></div>
+    <div id="feat">
+      <div class="q"><p>Q1 · Stairs or steps between sidewalk and door? <small>Any step up or down, including a single step or a stoop.</small></p>
+        <div class="opts" data-q="stairs"><button data-v="yes">Yes <kbd>Q</kbd></button><button data-v="no">No <kbd>W</kbd></button><button data-v="unsure">Unsure <kbd>E</kbd></button></div></div>
+      <div class="q"><p>Q2 · Gate, fence or barrier in front of the entrance? <small>Gate/fence/railing that must be opened or passed through to reach the door.</small></p>
+        <div class="opts" data-q="gate"><button data-v="yes">Yes <kbd>A</kbd></button><button data-v="no">No <kbd>S</kbd></button><button data-v="unsure">Unsure <kbd>D</kbd></button></div></div>
+      <div class="q"><p>Q3 · Ramp or step-free sloped access visible?</p>
+        <div class="opts" data-q="ramp"><button data-v="yes">Yes <kbd>Z</kbd></button><button data-v="no">No <kbd>X</kbd></button><button data-v="unsure">Unsure <kbd>C</kbd></button></div></div>
+      <div class="q"><p>Q4 · Could a sidewalk delivery robot reach the door area? <small>Robot rolls on flat ground, cannot climb steps, cannot open gates or doors.</small></p>
+        <div class="opts" data-q="robot"><button data-v="yes">Yes <kbd>R</kbd></button><button data-v="no">No <kbd>T</kbd></button><button data-v="unsure">Unsure <kbd>Y</kbd></button></div></div>
+    </div>
+    <div class="q"><p>Comment (optional)</p><textarea id="comment" rows="2"></textarea></div>
+    <div class="nav"><button id="prev">← Prev</button><button id="next" class="primary">Save &amp; next →  <kbd>Enter</kbd></button><button id="skipTo">Go to first open</button></div>
+    <div id="msg" class="warn" style="margin-top:8px"></div>
+    <details><summary>Rules</summary>
+      <ul>
+        <li>Judge only what is visible; do not guess from building type.</li>
+        <li>Use <b>Unsure</b> when the feature cannot be seen clearly.</li>
+        <li>Annotate independently: do not discuss items with the other annotator.</li>
+        <li>Progress is kept in this browser; export regularly as a backup.</li>
+      </ul></details>
+  </div>
+</main>
+<script>
+(() => {
+  const state = { tasks: [], files: {}, i: 0, ann: {} };
+  const $ = s => document.querySelector(s);
+  const storeKey = () => `amr-annot:${($('#annot').value || 'anon').trim()}:${state.tasks.length}:${state.tasks[0]?.task_id || ''}`;
+
+  function save() { try { localStorage.setItem(storeKey(), JSON.stringify({ ann: state.ann, i: state.i })); } catch (e) {} }
+  function restore() {
+    try { const s = JSON.parse(localStorage.getItem(storeKey()) || 'null'); if (s) { state.ann = s.ann || {}; state.i = s.i || 0; } } catch (e) {}
+  }
+  function parseCSV(text) {
+    const lines = text.replace(/\r/g, '').split('\n').filter(Boolean);
+    const head = lines.shift().split(',');
+    return lines.map(l => { const v = l.split(','); return Object.fromEntries(head.map((h, k) => [h, v[k]])); });
+  }
+  function current() { return state.tasks[state.i]; }
+  function rec() { const t = current(); if (!t) return null; return state.ann[t.task_id] ||= { task_id: t.task_id, image_file: t.image_file }; }
+
+  function render() {
+    const t = current();
+    $('#progress').textContent = state.tasks.length ? `${Object.values(state.ann).filter(complete).length} / ${state.tasks.length} done` : '';
+    if (!t) return;
+    const f = state.files[t.image_file];
+    $('#imgbox').innerHTML = f ? `<img alt="" src="${URL.createObjectURL(f)}">` : `<span style="color:#f88">Image ${t.image_file} not found in the selected folder</span>`;
+    $('#taskinfo').textContent = `${t.task_id} · item ${state.i + 1} of ${state.tasks.length}`;
+    const r = rec();
+    document.querySelectorAll('.opts').forEach(g => g.querySelectorAll('button').forEach(b => b.classList.toggle('sel', r[g.dataset.q] === b.dataset.v)));
+    $('#reason').value = r.reason || '';
+    $('#comment').value = r.comment || '';
+    const unusable = r.usable === 'no';
+    $('#feat').classList.toggle('disabled', unusable);
+    $('#reasonBox').classList.toggle('disabled', !unusable);
+    $('#msg').textContent = '';
+  }
+  function complete(r) { return r && (r.usable === 'no' ? !!r.reason : r.usable === 'yes' && r.stairs && r.gate && r.ramp && r.robot); }
+  function setAns(q, v) { const r = rec(); if (!r) return; r[q] = v; if (q === 'usable' && v === 'yes') r.reason = ''; r.time = new Date().toISOString(); save(); render(); }
+  function go(d) {
+    const r = rec(); if (!r) return;
+    r.reason = $('#reason').value; r.comment = $('#comment').value.replace(/[\n,;]/g, ' ');
+    if (d > 0 && !complete(r)) { $('#msg').textContent = 'Answer all questions (or mark the image as not judgeable with a reason).'; return; }
+    state.i = Math.max(0, Math.min(state.tasks.length - 1, state.i + d)); save(); render();
+  }
+
+  document.querySelectorAll('.opts').forEach(g => g.addEventListener('click', e => { const b = e.target.closest('button'); if (b) setAns(g.dataset.q, b.dataset.v); }));
+  $('#reason').addEventListener('change', () => { const r = rec(); if (r) { r.reason = $('#reason').value; save(); } });
+  $('#next').onclick = () => go(1); $('#prev').onclick = () => go(-1);
+  $('#skipTo').onclick = () => { const k = state.tasks.findIndex(t => !complete(state.ann[t.task_id])); if (k >= 0) { state.i = k; render(); } };
+  $('#tasks').onchange = async e => { state.tasks = parseCSV(await e.target.files[0].text()); restore(); render(); $('#status').textContent = `${state.tasks.length} tasks loaded`; };
+  $('#imgs').onchange = e => { for (const f of e.target.files) state.files[f.name] = f; $('#status').textContent += ` · ${e.target.files.length} images`; render(); };
+  $('#annot').onchange = () => { restore(); render(); };
+  $('#export').onclick = () => {
+    const id = ($('#annot').value || '').trim(); if (!id) { alert('Enter an annotator ID first.'); return; }
+    const cols = ['task_id', 'image_file', 'usable', 'reason', 'stairs', 'gate', 'ramp', 'robot', 'comment', 'time'];
+    const rows = state.tasks.map(t => state.ann[t.task_id] || { task_id: t.task_id, image_file: t.image_file });
+    const csv = ['annotator,' + cols.join(',')].concat(rows.map(r => [id].concat(cols.map(c => (r[c] ?? ''))).join(','))).join('\n');
+    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+    a.download = `annotations_${id}.csv`; a.click();
+  };
+  const keys = { '1': ['usable', 'yes'], '2': ['usable', 'no'], q: ['stairs', 'yes'], w: ['stairs', 'no'], e: ['stairs', 'unsure'],
+    a: ['gate', 'yes'], s: ['gate', 'no'], d: ['gate', 'unsure'], z: ['ramp', 'yes'], x: ['ramp', 'no'], c: ['ramp', 'unsure'],
+    r: ['robot', 'yes'], t: ['robot', 'no'], y: ['robot', 'unsure'] };
+  document.addEventListener('keydown', e => {
+    if (['TEXTAREA', 'INPUT', 'SELECT'].includes(document.activeElement.tagName)) return;
+    if (e.key === 'Enter') { go(1); e.preventDefault(); return; }
+    if (e.key === 'ArrowLeft') { go(-1); return; }
+    const k = keys[e.key.toLowerCase()]; if (k) setAns(...k);
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Gate and ramp review</title>
+<style>
+  :root { --bg:#fafafa; --fg:#1d1d1f; --mute:#6e6e73; --line:#d2d2d7; --acc:#0b57d0; --no:#b3261e; }
+  * { box-sizing: border-box; }
+  body { margin:0; font:15px/1.45 system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background:var(--bg); color:var(--fg); }
+  header { padding:12px 20px; border-bottom:1px solid var(--line); display:flex; gap:16px; align-items:center; flex-wrap:wrap; background:#fff; }
+  header h1 { font-size:16px; margin:0 12px 0 0; }
+  main { display:grid; grid-template-columns: minmax(0,1fr) 340px; gap:20px; padding:20px; }
+  #imgbox { background:#000; display:flex; align-items:center; justify-content:center; min-height:480px; border-radius:6px; overflow:hidden; }
+  #imgbox img { max-width:100%; max-height:80vh; }
+  #panel { background:#fff; border:1px solid var(--line); border-radius:6px; padding:16px; }
+  #panel p.q { margin:0 0 4px; font-weight:600; }
+  #panel small { color:var(--mute); display:block; margin-bottom:12px; }
+  .choices { display:grid; grid-template-columns:1fr; gap:8px; }
+  .choices button { text-align:left; border:1px solid var(--line); background:#fff; padding:12px 14px; border-radius:6px; cursor:pointer; font:inherit; font-size:16px; }
+  .choices button.sel { background:var(--acc); color:#fff; border-color:var(--acc); }
+  .skip { margin-top:10px; background:none; border:none; color:var(--mute); cursor:pointer; font:inherit; font-size:13px; text-decoration:underline; padding:0; }
+  .skip.sel { color:var(--no); font-weight:600; }
+  .nav { display:flex; gap:8px; margin-top:16px; }
+  .nav button, header button, header label.btn { border:1px solid var(--line); background:#fff; padding:7px 14px; border-radius:4px; cursor:pointer; font:inherit; }
+  .primary { background:var(--acc)!important; color:#fff; border-color:var(--acc)!important; }
+  #status { color:var(--mute); font-size:13px; }
+  kbd { border:1px solid var(--line); border-bottom-width:2px; border-radius:3px; padding:0 5px; font-size:12px; background:#fff; color:var(--fg); float:right; }
+  .sel kbd { color:var(--fg); }
+  details { margin-top:14px; color:var(--mute); font-size:13px; }
+  input[type=file] { display:none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Gate and ramp review</h1>
+  <input id="annot" type="text" placeholder="Annotator ID (e.g. A1)" style="width:170px">
+  <label class="btn">1. Task list (.csv)<input id="tasks" type="file" accept=".csv"></label>
+  <label class="btn">2. Image folder<input id="imgs" type="file" webkitdirectory multiple></label>
+  <button id="export" class="primary">Export (.csv)</button>
+  <span id="progress"></span>
+  <span id="status"></span>
+</header>
+<main>
+  <div>
+    <div id="imgbox"><span style="color:#aaa">Load the task list and the image folder to start.</span></div>
+    <div id="taskinfo" style="color:var(--mute);margin-top:6px"></div>
+  </div>
+  <div id="panel">
+    <p class="q">What is in front of the entrance?</p>
+    <small>Entrance of the building at the image centre, between sidewalk and door.</small>
+    <div class="choices">
+      <button data-v="gate">Gate only <kbd>1</kbd></button>
+      <button data-v="ramp">Ramp only <kbd>2</kbd></button>
+      <button data-v="both">Both gate and ramp <kbd>3</kbd></button>
+      <button data-v="none">Neither <kbd>4</kbd></button>
+    </div>
+    <button class="skip" data-v="cannot_judge">Cannot judge this image <kbd>0</kbd></button>
+    <div class="nav"><button id="prev">← Prev</button><button id="next" class="primary">Save &amp; next <kbd>Enter</kbd></button><button id="skipTo">First open</button></div>
+    <div id="msg" style="color:var(--no);margin-top:8px"></div>
+    <details><summary>Definitions</summary>
+      <ul>
+        <li><b>Gate</b>: a gate, fence or barrier that must be opened or passed through to reach the door.
+          A railing along stairs or around a basement areaway is <b>not</b> a gate if the path to the door is open.</li>
+        <li><b>Ramp</b>: a ramp or step-free sloped access to the entrance. A sloping sidewalk is not a ramp.</li>
+        <li>Use <b>Cannot judge</b> only if the entrance is not visible at all.</li>
+        <li>Progress is kept in this browser; export regularly as a backup.</li>
+      </ul></details>
+  </div>
+</main>
+<script>
+(() => {
+  const S = { tasks: [], files: {}, i: 0, ann: {} };
+  const $ = s => document.querySelector(s);
+  const key = () => `amr-review:${($('#annot').value || 'anon').trim()}:${S.tasks.length}:${S.tasks[0]?.task_id || ''}`;
+  const save = () => { try { localStorage.setItem(key(), JSON.stringify({ ann: S.ann, i: S.i })); } catch (e) {} };
+  const restore = () => { try { const s = JSON.parse(localStorage.getItem(key()) || 'null'); if (s) { S.ann = s.ann || {}; S.i = s.i || 0; } } catch (e) {} };
+  const parseCSV = t => { const l = t.replace(/\r/g, '').split('\n').filter(Boolean); const h = l.shift().split(','); return l.map(r => { const v = r.split(','); return Object.fromEntries(h.map((k, j) => [k, v[j]])); }); };
+  const cur = () => S.tasks[S.i];
+  function render() {
+    const t = cur();
+    $('#progress').textContent = S.tasks.length ? `${Object.values(S.ann).filter(a => a.answer).length} / ${S.tasks.length} done` : '';
+    if (!t) return;
+    const f = S.files[t.image_file];
+    $('#imgbox').innerHTML = f ? `<img alt="" src="${URL.createObjectURL(f)}">` : `<span style="color:#f88">Image ${t.image_file} not found in the selected folder</span>`;
+    $('#taskinfo').textContent = `${t.task_id} · item ${S.i + 1} of ${S.tasks.length}`;
+    const a = S.ann[t.task_id]?.answer;
+    document.querySelectorAll('[data-v]').forEach(b => b.classList.toggle('sel', b.dataset.v === a));
+    $('#msg').textContent = '';
+  }
+  function choose(v) { const t = cur(); if (!t) return; S.ann[t.task_id] = { task_id: t.task_id, image_file: t.image_file, answer: v, time: new Date().toISOString() }; save(); render(); }
+  function go(d) {
+    const t = cur(); if (!t) return;
+    if (d > 0 && !S.ann[t.task_id]?.answer) { $('#msg').textContent = 'Choose an answer first.'; return; }
+    S.i = Math.max(0, Math.min(S.tasks.length - 1, S.i + d)); save(); render();
+  }
+  document.querySelectorAll('[data-v]').forEach(b => b.onclick = () => choose(b.dataset.v));
+  $('#next').onclick = () => go(1); $('#prev').onclick = () => go(-1);
+  $('#skipTo').onclick = () => { const k = S.tasks.findIndex(t => !S.ann[t.task_id]?.answer); if (k >= 0) { S.i = k; render(); } };
+  $('#tasks').onchange = async e => { S.tasks = parseCSV(await e.target.files[0].text()); restore(); render(); $('#status').textContent = `${S.tasks.length} tasks loaded`; };
+  $('#imgs').onchange = e => { for (const f of e.target.files) S.files[f.name] = f; $('#status').textContent += ` · ${e.target.files.length} images`; render(); };
+  $('#annot').onchange = () => { restore(); render(); };
+  $('#export').onclick = () => {
+    const id = ($('#annot').value || '').trim(); if (!id) { alert('Enter an annotator ID first.'); return; }
+    const rows = S.tasks.map(t => S.ann[t.task_id] || { task_id: t.task_id, image_file: t.image_file, answer: '', time: '' });
+    const csv = ['annotator,task_id,image_file,answer,time'].concat(rows.map(r => [id, r.task_id, r.image_file, r.answer || '', r.time || ''].join(','))).join('\n');
+    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' })); a.download = `review_${id}.csv`; a.click();
+  };
+  const keys = { '1': 'gate', '2': 'ramp', '3': 'both', '4': 'none', '0': 'cannot_judge' };
+  document.addEventListener('keydown', e => {
+    if (document.activeElement.tagName === 'INPUT') return;
+    if (e.key === 'Enter') { go(1); e.preventDefault(); return; }
+    if (e.key === 'ArrowLeft') { go(-1); return; }
+    if (keys[e.key]) choose(keys[e.key]);
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,36 @@
+column,type,unit,description,source,missing_share
+bin,string,,Building Identification Number.,Building Footprints,0.0
+nta2020,string,,2020 NTA code of the building.,2020 NTAs,0.0001
+nta_name,string,,2020 NTA name of the building.,2020 NTAs,0.0001
+zipcode,string,,ZIP code of the building.,Address Points,0.0009
+in_building_table,boolean,,BIN present in manhattan_buildings.csv (false if the footprint is no longer 'constructed' in the source snapshot).,derived,0.0
+target_lon,float,degrees (WGS84),Longitude of the point the camera was aimed at (delivery point).,this study,0.0
+target_lat,float,degrees (WGS84),Latitude of the point the camera was aimed at.,this study,0.0
+target_source,string,,'address_point' (all annotated images).,this study,0.0
+request_mode,string,,'camera_location' (image requested at the camera point) or 'panorama_id'.,this study,0.0
+camera_lon,float,degrees (WGS84),Longitude of the requested camera location (nearest point on the street centreline).,Centerline (derived),0.0
+camera_lat,float,degrees (WGS84),Latitude of the requested camera location.,Centerline (derived),0.0
+camera_source,string,,How the camera location was obtained.,this study,0.0
+camera_target_distance_m,float,m,Geodesic distance between the requested camera location and the target point.,derived,0.0
+heading_deg,float,degrees from north,Requested camera heading (planar bearing from camera to target in lon/lat degrees).,this study,0.0
+pitch_deg,float,degrees,Requested camera pitch.,this study,0.0
+fov_deg,float,degrees,Requested horizontal field of view.,this study,0.0
+image_size_px,string,px,Requested image size.,this study,0.0
+pano_id,string,,Street View panorama ID when recorded (cacheable under the Street View Static API terms).,Street View metadata,0.9996
+image_capture_date,string,YYYY-MM,Capture date of the panorama when recorded by the metadata request.,Street View metadata,0.381
+duplicate_request_group,integer,,"Group ID shared by buildings whose requests were near-identical (camera within 1 m, heading within 5 deg), i.e. the model saw the same image; empty otherwise. Useful to assess annotation repeatability.",derived,0.9955
+qa_camera_far,boolean,,Quality flag: camera location more than 30 m from the target (entrance may be small or occluded).,derived,0.0
+qa_capture_before_2020,boolean,,Quality flag: panorama captured before 2020 (conditions may have changed); false also when the date is unknown.,derived,0.0
+image_usable,boolean,,AI: the entrance or its access conditions can be interpreted at least partially.,multimodal model,0.0
+stairs_present,boolean,,AI: visible stairs/steps at or immediately before the entrance (empty if not usable).,multimodal model,0.0315
+gate_present,boolean,,Visible gate/fence/barrier at the entrance after the targeted human review (see gate_ramp_source); empty if the image is not usable or the reviewers could not judge it.,multimodal model + human review,0.121
+ramp_present,boolean,,Visible ramp after the targeted human review (see gate_ramp_source); empty as for gate_present.,multimodal model + human review,0.121
+accessible_rule,integer,0/1,"Primary label (AI + human review): 1 if no gate and (no stairs or ramp present), from stairs_present, gate_present, ramp_present; empty if the image is not usable or the reviewers could not judge it.",derived (this study),0.121
+gate_ramp_source,string,,"Origin of gate_present/ramp_present: ai (AI reported neither feature and the image was not drawn as a review control; AI value kept), human_review (targeted review; with two annotators a feature counts if at least one saw it), human_validation_set_a (answers from validation Set A), human_review_not_judgeable (selected for review but the annotators could not judge the entrance; gate, ramp and label left empty). Empty if the image is not usable.",this study,0.0315
+gate_present_ai,boolean,,"AI: visible gate/fence/barrier at the entrance, as reported by the model (empty if not usable).",multimodal model,0.0315
+ramp_present_ai,boolean,,"AI: visible ramp, as reported by the model (empty if not usable).",multimodal model,0.0315
+accessible_rule_ai,integer,0/1,"AI-only label: same rule applied to stairs_present, gate_present_ai, ramp_present_ai; empty if not usable.",derived (this study),0.0315
+ai_amr_can_reach_door,boolean,,Secondary label: the model's holistic judgement that a sidewalk robot could reach the door area.,multimodal model,0.0315
+ai_model,string,,Model snapshot that produced the annotation.,OpenAI API response,0.0
+ai_response_id,string,,API response identifier (links to streetview_ai_raw_outputs.jsonl).,OpenAI API response,0.0
+ai_request_utc,string,ISO 8601 UTC,Time the response was created.,OpenAI API response,0.0

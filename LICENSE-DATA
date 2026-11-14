@@ -1,0 +1,13 @@
+The Data Records produced by this project (files in data/records/, data/dictionaries/
+and the human validation annotations) are licensed under the Creative Commons
+Attribution 4.0 International License (CC BY 4.0):
+https://creativecommons.org/licenses/by/4.0/
+
+Third-party sources:
+* data/source_snapshot/ contains unmodified subsets of datasets published on NYC Open Data
+  (see data/raw/MANIFEST.csv); their use is governed by the NYC Open Data Terms of Use
+  (https://opendata.cityofnewyork.us/overview/#termsofuse).
+* Google Street View imagery is NOT included. Panorama IDs, capture dates and request
+  geometry are provided as permitted by the Google Maps Platform terms; re-requesting
+  imagery requires your own API key and is subject to Google's terms.
+* Model outputs in streetview_ai_raw_outputs.jsonl were generated with the OpenAI API.

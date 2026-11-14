@@ -1,0 +1,43 @@
+{
+  "title": "A building-level dataset of entrance accessibility for sidewalk delivery robots in Manhattan: code",
+  "upload_type": "software",
+  "license": "MIT",
+  "creators": [
+    {
+      "name": "Rubrichi, Lorenzo",
+      "affiliation": "University of Campania Luigi Vanvitelli, Department of Architecture and Industrial Design, Aversa (CE), Italy"
+    },
+    {
+      "name": "Niohuru, Ilha",
+      "affiliation": "Center for Architecture Science and Ecology (CASE), Rensselaer Polytechnic Institute, Brooklyn, NY, USA"
+    },
+    {
+      "name": "Li, Fengqi",
+      "affiliation": "Center for Architecture Science and Ecology (CASE), Rensselaer Polytechnic Institute, Brooklyn, NY, USA"
+    },
+    {
+      "name": "Pazour, Jennifer A.",
+      "affiliation": "Department of Industrial and Systems Engineering, Rensselaer Polytechnic Institute, Troy, NY, USA"
+    }
+  ],
+  "keywords": [
+    "sidewalk robots",
+    "last-meter delivery",
+    "building accessibility",
+    "street view imagery",
+    "New York City"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "10.5281/zenodo.24217751",
+      "relation": "isSupplementTo",
+      "scheme": "doi"
+    }
+  ],
+  "grants": [
+    {
+      "id": "10.13039/100000001::2450693"
+    }
+  ],
+  "version": "1.0.0"
+}

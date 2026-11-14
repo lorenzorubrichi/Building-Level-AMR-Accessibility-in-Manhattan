@@ -1,0 +1,26 @@
+# secrets
+.env
+*.key
+APIK.txt
+GPTKey.txt
+google_api_key.txt
+# full raw downloads and private inputs are not redistributed (the Manhattan snapshot is in data/source_snapshot/)
+data/raw/*
+!data/raw/MANIFEST.csv
+!data/raw/README.md
+data/private/*
+!data/private/README.md
+data/interim/
+# validation work files (annotations are deposited once complete)
+validation_kit/annotations_*.csv
+# python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.idea/
+.vscode/
+manuscript/_standalone_check/
+manuscript/*.aux
+manuscript/*.log
+manuscript/overleaf/

@@ -1,0 +1,49 @@
+comparison,variable,level,sample,reference,smd
+sample_vs_all_manhattan,numfloors,,6.906276500447896,6.604133504492939,0.046828236841210576
+sample_vs_all_manhattan,height_roof_m,,26.040301871060606,23.337889947333423,0.12319078005259672
+sample_vs_all_manhattan,construction_year,,1910.2426909307876,1916.3786861581468,-0.18866220572596848
+sample_vs_all_manhattan,ground_elevation_m,,15.46991301247772,14.789546104160083,0.066050098311138
+sample_vs_all_manhattan,distance_to_sidewalk_m,,4.091082752626586,5.06794566699639,-0.14809275353850926
+sample_vs_all_manhattan,landuse,One & two family buildings,0.07203326897371157,0.0953090096798213,-0.08413446198373807
+sample_vs_all_manhattan,landuse,Multi-family walk-up buildings,0.30580721817911777,0.2746451860375911,0.0686994946655026
+sample_vs_all_manhattan,landuse,Multi-family elevator buildings,0.1097579088073667,0.1259053679009003,-0.05009953685532787
+sample_vs_all_manhattan,landuse,Mixed residential & commercial buildings,0.247437991979801,0.30050317019788353,-0.1191929135902815
+sample_vs_all_manhattan,landuse,Commercial & office buildings,0.20065349769790583,0.1085764570500237,0.2567724122323951
+sample_vs_all_manhattan,landuse,Industrial & manufacturing,0.00653497697905837,0.004693246688779079,0.024651367258123787
+sample_vs_all_manhattan,landuse,Transportation & utility,0.005198277142432793,0.009928021841648052,-0.05461309267905271
+sample_vs_all_manhattan,landuse,Public facilities & institutions,0.04485370562899153,0.06572801732891086,-0.0914302198021577
+sample_vs_all_manhattan,landuse,Open space & outdoor recreation,0.001188177632556067,0.0071978158351948375,-0.09310404408115384
+sample_vs_all_manhattan,landuse,Parking facilities,0.00460418832615476,0.004196845596696677,0.006154146696019963
+sample_vs_all_manhattan,landuse,Vacant land,0.001188177632556067,0.0011507479861910242,0.001095157736989833
+sample_vs_same_neighbourhoods,numfloors,,6.906276500447896,8.156735852568875,-0.16705699894791193
+sample_vs_same_neighbourhoods,height_roof_m,,26.040301871060606,29.39950672636969,-0.12891209640257212
+sample_vs_same_neighbourhoods,construction_year,,1910.2426909307876,1917.263206845238,-0.2206552314444804
+sample_vs_same_neighbourhoods,ground_elevation_m,,15.46991301247772,16.213494164285056,-0.08970149981427006
+sample_vs_same_neighbourhoods,distance_to_sidewalk_m,,4.091082752626586,4.57076725116885,-0.07818820821099269
+sample_vs_same_neighbourhoods,landuse,One & two family buildings,0.07203326897371157,0.0633109413821662,0.03473031175505267
+sample_vs_same_neighbourhoods,landuse,Multi-family walk-up buildings,0.30580721817911777,0.2681512837029539,0.08331699811118645
+sample_vs_same_neighbourhoods,landuse,Multi-family elevator buildings,0.1097579088073667,0.11815588478881016,-0.026431074442139962
+sample_vs_same_neighbourhoods,landuse,Mixed residential & commercial buildings,0.247437991979801,0.2621698720898132,-0.033812858998994805
+sample_vs_same_neighbourhoods,landuse,Commercial & office buildings,0.20065349769790583,0.20999355847980122,-0.023124065578130595
+sample_vs_same_neighbourhoods,landuse,Industrial & manufacturing,0.00653497697905837,0.005797368178890218,0.009422500821450868
+sample_vs_same_neighbourhoods,landuse,Transportation & utility,0.005198277142432793,0.008926106561148431,-0.04452796644342877
+sample_vs_same_neighbourhoods,landuse,Public facilities & institutions,0.04485370562899153,0.051900248458636236,-0.03284602524124823
+sample_vs_same_neighbourhoods,landuse,Open space & outdoor recreation,0.001188177632556067,0.002668629796632005,-0.03375020221852051
+sample_vs_same_neighbourhoods,landuse,Parking facilities,0.00460418832615476,0.005061194441888285,-0.0065899449699044635
+sample_vs_same_neighbourhoods,landuse,Vacant land,0.001188177632556067,0.0022085212110057972,-0.02478194304587557
+sample_vs_imaged_not_annotated_same_neighbourhoods,numfloors,,6.906276500447896,10.3425314795383,-0.3800162734350277
+sample_vs_imaged_not_annotated_same_neighbourhoods,height_roof_m,,26.040301871060606,35.05344161862336,-0.28587962176374865
+sample_vs_imaged_not_annotated_same_neighbourhoods,construction_year,,1910.2426909307876,1929.5002621919245,-0.5433250772583575
+sample_vs_imaged_not_annotated_same_neighbourhoods,ground_elevation_m,,15.46991301247772,17.677064191802014,-0.2648578966857375
+sample_vs_imaged_not_annotated_same_neighbourhoods,distance_to_sidewalk_m,,4.091082752626586,5.43247153665129,-0.17540634168917943
+sample_vs_imaged_not_annotated_same_neighbourhoods,landuse,One & two family buildings,0.07203326897371157,0.05156490507952796,0.08508182496709021
+sample_vs_imaged_not_annotated_same_neighbourhoods,landuse,Multi-family walk-up buildings,0.30580721817911777,0.21575166752180605,0.20619718809597234
+sample_vs_imaged_not_annotated_same_neighbourhoods,landuse,Multi-family elevator buildings,0.1097579088073667,0.13545407901487944,-0.0784058899463774
+sample_vs_imaged_not_annotated_same_neighbourhoods,landuse,Mixed residential & commercial buildings,0.247437991979801,0.2821959979476655,-0.07883540975581348
+sample_vs_imaged_not_annotated_same_neighbourhoods,landuse,Commercial & office buildings,0.20065349769790583,0.21498204207285787,-0.035319609697971314
+sample_vs_imaged_not_annotated_same_neighbourhoods,landuse,Industrial & manufacturing,0.00653497697905837,0.004104669061056952,0.033414239530566235
+sample_vs_imaged_not_annotated_same_neighbourhoods,landuse,Transportation & utility,0.005198277142432793,0.01539250897896357,-0.10111943308691021
+sample_vs_imaged_not_annotated_same_neighbourhoods,landuse,Public facilities & institutions,0.04485370562899153,0.06310928681375064,-0.08084961459909365
+sample_vs_imaged_not_annotated_same_neighbourhoods,landuse,Open space & outdoor recreation,0.001188177632556067,0.0048742945100051305,-0.06709075237817258
+sample_vs_imaged_not_annotated_same_neighbourhoods,landuse,Parking facilities,0.00460418832615476,0.005643919958953309,-0.014562684788325005
+sample_vs_imaged_not_annotated_same_neighbourhoods,landuse,Vacant land,0.001188177632556067,0.0038481272447408927,-0.053092462759178824

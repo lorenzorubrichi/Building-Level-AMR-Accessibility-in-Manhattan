@@ -1,27 +1,15 @@
-# Raw Data Samples
+# Raw inputs (not in git)
 
-This folder contains small sample extracts with the same filenames expected by
-the pipeline. They are included only so users can inspect the schema and test
-path configuration.
+`MANIFEST.csv` lists every raw input: NYC Open Data dataset ID, landing page,
+download date, number format and SHA-256 of the file used.
 
-To reproduce the full dataset, replace these sample files with the complete
-source files downloaded from the original public data providers.
+You do **not** need these files to rebuild the records: the Manhattan subset of
+each input, in its original formatting, is deposited with the Data Records as
+`source_snapshot/` (created by `pipeline/a_build_records/00_make_source_snapshot.py`)
+and `run_all.py records` uses it by default.
 
-Expected files:
-
-- `BUILDING.csv`
-- `Centerline.csv`
-- `nyc_neighborhoods.geojson`
-- `pluto_full.csv`
-- `AddressPoint_full.csv`
-- `population.csv`
-- `traffic.csv`
-- `pedestrian_mobility.csv`
-- `NYC_Sidewalk.csv`
-- `Parking_Regulation.csv`
-- `Parking_Meters.csv`
-- `Parking_Meters_-_ParkNYC_Block_Faces.csv`
-- `Parking_Meters_-_Citywide_Rate_Zones.csv`
-
-The sample files are not suitable for scientific analysis.
-
+`number_format = it` means the file was exported from the NYC Open Data web
+interface with Italian locale formatting ('.' thousands separator, ',' decimal
+separator). The parser detects the format and fails loudly on ambiguous input.
+NYC Open Data updates datasets in place: a new download will differ slightly
+from the snapshot.

@@ -1,0 +1,27 @@
+cff-version: 1.2.0
+message: "If you use this dataset or code, please cite the Data Descriptor and the dataset."
+title: "A building-level dataset of entrance accessibility for sidewalk delivery robots in Manhattan"
+version: 1.0.0
+license: MIT
+repository-code: "https://github.com/lorenzorubrichi/Building-Level-AMR-Accessibility-in-Manhattan"
+authors:
+  - family-names: Rubrichi
+    given-names: "Lorenzo"
+    affiliation: "University of Campania Luigi Vanvitelli, Department of Architecture and Industrial Design, Aversa (CE), Italy"
+  - family-names: Niohuru
+    given-names: "Ilha"
+    affiliation: "Center for Architecture Science and Ecology (CASE), Rensselaer Polytechnic Institute, Brooklyn, NY, USA"
+  - family-names: Li
+    given-names: "Fengqi"
+    affiliation: "Center for Architecture Science and Ecology (CASE), Rensselaer Polytechnic Institute, Brooklyn, NY, USA"
+  - family-names: Pazour
+    given-names: "Jennifer A."
+    affiliation: "Department of Industrial and Systems Engineering, Rensselaer Polytechnic Institute, Troy, NY, USA"
+identifiers:
+  - type: doi
+    value: "10.5281/zenodo.24217751"
+    description: "Data Records"
+  - type: doi
+    value: "10.5281/zenodo.24218565"
+    description: "Code archive, v1.0.0"
+keywords: [sidewalk robots, autonomous mobile robots, last-meter delivery, building accessibility, street view imagery, New York City]

@@ -1,0 +1,159 @@
+table,column,source_record,description
+training_buildings.csv,bin,all records (join key),Building Identification Number.
+training_buildings.csv,bbl,manhattan_buildings.csv,Borough-Block-Lot of the tax lot used to join PLUTO (MAPPLUTO_BBL; DOF billing BBL for condominiums).
+training_buildings.csv,borough,manhattan_buildings.csv,"Borough (always 'Manhattan', i.e. BIN starting with 1; includes Marble Hill)."
+training_buildings.csv,nta2020,streetview_entrance_labels.csv,2020 NTA code of the building.
+training_buildings.csv,nta_name,streetview_entrance_labels.csv,2020 NTA name of the building.
+training_buildings.csv,zipcode,streetview_entrance_labels.csv,ZIP code of the building.
+training_buildings.csv,zipcode_source,manhattan_buildings.csv,'address_point_same_bin' or 'nearest_address_point_50m' (fallback when the BIN has no address point); empty if unavailable.
+training_buildings.csv,centroid_lon,manhattan_buildings.csv,Longitude of the area-weighted footprint centroid.
+training_buildings.csv,centroid_lat,manhattan_buildings.csv,Latitude of the area-weighted footprint centroid.
+training_buildings.csv,delivery_lon,manhattan_buildings.csv,"Longitude of the delivery point: address point with the same BIN nearest to the centroid, else the centroid."
+training_buildings.csv,delivery_lat,manhattan_buildings.csv,Latitude of the delivery point.
+training_buildings.csv,delivery_point_source,manhattan_buildings.csv,'address_point' or 'centroid'.
+training_buildings.csv,full_address,manhattan_buildings.csv,House number and street of the selected address point.
+training_buildings.csv,footprint_area_m2,manhattan_buildings.csv,Footprint area computed from the polygon geometry (SHAPE_AREA is not used: it is computed in Web Mercator).
+training_buildings.csv,construction_year,manhattan_buildings.csv,Year construction was completed; missing where the source reports 0 or null.
+training_buildings.csv,height_roof_m,manhattan_buildings.csv,"Roof height above ground level (source in feet, converted with 0.3048); missing where the source reports 0."
+training_buildings.csv,ground_elevation_m,manhattan_buildings.csv,"Lowest elevation at building ground level (source in feet, converted)."
+training_buildings.csv,numfloors,manhattan_buildings.csv,Number of floors of the tallest building on the tax lot (lot-level attribute repeated for every building on the lot).
+training_buildings.csv,landuse,manhattan_buildings.csv,PLUTO land-use category code (1-11).
+training_buildings.csv,landuse_label,manhattan_buildings.csv,Label of the land-use code.
+training_buildings.csv,bldgclass,manhattan_buildings.csv,"Department of Finance building class (e.g. C4, D1, O5)."
+training_buildings.csv,bldgclass_group,manhattan_buildings.csv,First letter of bldgclass.
+training_buildings.csv,bldgclass_group_label,manhattan_buildings.csv,Label of the building class group.
+training_buildings.csv,lot_units_res,manhattan_buildings.csv,Residential units summed over all buildings on the tax lot (proxy for delivery demand).
+training_buildings.csv,lot_units_total,manhattan_buildings.csv,Residential and non-residential units summed over all buildings on the tax lot.
+training_buildings.csv,lot_bldgarea_m2,manhattan_buildings.csv,"Gross floor area of all buildings on the tax lot (source in sq ft, converted)."
+training_buildings.csv,lot_numbldgs,manhattan_buildings.csv,Number of buildings on the tax lot according to PLUTO.
+training_buildings.csv,yearalter1,manhattan_buildings.csv,Year of the (second most recent) alteration; missing if never altered (0 in source).
+training_buildings.csv,yearalter2,manhattan_buildings.csv,Year of the most recent alteration when altered more than once.
+training_buildings.csv,last_alteration_year,manhattan_buildings.csv,"max(yearalter1, yearalter2). Alterations after 1992 are subject to the ADA Standards."
+training_buildings.csv,lotfront_m,manhattan_buildings.csv,Tax-lot frontage along the street (source in ft).
+training_buildings.csv,bldgfront_m,manhattan_buildings.csv,Building frontage along the street (source in ft; building 1 of the lot).
+training_buildings.csv,bldgdepth_m,manhattan_buildings.csv,Building depth (source in ft; building 1 of the lot).
+training_buildings.csv,basement_code,manhattan_buildings.csv,"PLUTO BsmtCode: 0 none, 1 above-grade full, 2 below-grade full, 3 above-grade partial, 4 below-grade partial, 5 unknown. Above-grade basements (brownstones, row houses) usually imply a raised first floor and a stoop."
+training_buildings.csv,proximity_code,manhattan_buildings.csv,"PLUTO ProxCode: 0 not available, 1 detached, 2 semi-attached, 3 attached."
+training_buildings.csv,in_historic_district,manhattan_buildings.csv,Lot lies in an LPC historic district.
+training_buildings.csv,historic_district,manhattan_buildings.csv,Name of the LPC historic district.
+training_buildings.csv,is_landmark,manhattan_buildings.csv,Lot contains an individual and/or interior landmark.
+training_buildings.csv,landmark_name,manhattan_buildings.csv,Landmark designation text as in PLUTO.
+training_buildings.csv,pluto_version,manhattan_buildings.csv,PLUTO release used (26v1).
+training_buildings.csv,distance_to_sidewalk_m,manhattan_buildings.csv,Planar distance from the delivery point to the nearest sidewalk polygon (0 if inside one).
+training_buildings.csv,distance_to_street_m,manhattan_buildings.csv,"Planar distance from the delivery point to the nearest vehicular street centreline (CSCL: constructed, roadbed type street, excluding non-vehicular segments). Approximates entrance setback from the roadway."
+training_buildings.csv,n_address_points,manhattan_buildings.csv,Number of address points sharing the BIN (0 = none; >1 often indicates several entrances or a corner building).
+training_buildings.csv,n_buildings_on_lot,manhattan_buildings.csv,Number of buildings in this table on the same tax lot (BBL). Lot-level PLUTO fields (e.g. numfloors) are shared by all of them.
+training_buildings.csv,qa_height_floors_inconsistent,manhattan_buildings.csv,Quality flag: single-building lot whose roof height per floor is < 2 m or > 8 m (likely error in height or floors).
+training_buildings.csv,geom_source,manhattan_buildings.csv,Footprint capture method ('Photogrammetric' or 'Other (Manual)').
+training_buildings.csv,streetview_image_acquired,manhattan_buildings.csv,A Street View image was downloaded for this building (8 neighbourhoods).
+training_buildings.csv,in_ai_annotated_sample,manhattan_buildings.csv,The image was annotated by the multimodal model (record streetview_entrance_labels.csv).
+training_buildings.csv,camera_lon,streetview_entrance_labels.csv,Longitude of the requested camera location (nearest point on the street centreline).
+training_buildings.csv,camera_lat,streetview_entrance_labels.csv,Latitude of the requested camera location.
+training_buildings.csv,camera_target_distance_m,streetview_entrance_labels.csv,Geodesic distance between the requested camera location and the target point.
+training_buildings.csv,heading_deg,streetview_entrance_labels.csv,Requested camera heading (planar bearing from camera to target in lon/lat degrees).
+training_buildings.csv,fov_deg,streetview_entrance_labels.csv,Requested horizontal field of view.
+training_buildings.csv,pano_id,streetview_entrance_labels.csv,Street View panorama ID when recorded (cacheable under the Street View Static API terms).
+training_buildings.csv,image_capture_date,streetview_entrance_labels.csv,Capture date of the panorama when recorded by the metadata request.
+training_buildings.csv,duplicate_request_group,streetview_entrance_labels.csv,"Group ID shared by buildings whose requests were near-identical (camera within 1 m, heading within 5 deg), i.e. the model saw the same image; empty otherwise. Useful to assess annotation repeatability."
+training_buildings.csv,qa_camera_far,streetview_entrance_labels.csv,Quality flag: camera location more than 30 m from the target (entrance may be small or occluded).
+training_buildings.csv,qa_capture_before_2020,streetview_entrance_labels.csv,Quality flag: panorama captured before 2020 (conditions may have changed); false also when the date is unknown.
+training_buildings.csv,image_usable,streetview_entrance_labels.csv,AI: the entrance or its access conditions can be interpreted at least partially.
+training_buildings.csv,stairs_present,streetview_entrance_labels.csv,AI: visible stairs/steps at or immediately before the entrance (empty if not usable).
+training_buildings.csv,gate_present,streetview_entrance_labels.csv,Visible gate/fence/barrier at the entrance after the targeted human review (see gate_ramp_source); empty if the image is not usable or the reviewers could not judge it.
+training_buildings.csv,ramp_present,streetview_entrance_labels.csv,Visible ramp after the targeted human review (see gate_ramp_source); empty as for gate_present.
+training_buildings.csv,accessible_rule,streetview_entrance_labels.csv,"Primary label (AI + human review): 1 if no gate and (no stairs or ramp present), from stairs_present, gate_present, ramp_present; empty if the image is not usable or the reviewers could not judge it."
+training_buildings.csv,gate_ramp_source,streetview_entrance_labels.csv,"Origin of gate_present/ramp_present: ai (AI reported neither feature and the image was not drawn as a review control; AI value kept), human_review (targeted review; with two annotators a feature counts if at least one saw it), human_validation_set_a (answers from validation Set A), human_review_not_judgeable (selected for review but the annotators could not judge the entrance; gate, ramp and label left empty). Empty if the image is not usable."
+training_buildings.csv,gate_present_ai,streetview_entrance_labels.csv,"AI: visible gate/fence/barrier at the entrance, as reported by the model (empty if not usable)."
+training_buildings.csv,ramp_present_ai,streetview_entrance_labels.csv,"AI: visible ramp, as reported by the model (empty if not usable)."
+training_buildings.csv,accessible_rule_ai,streetview_entrance_labels.csv,"AI-only label: same rule applied to stairs_present, gate_present_ai, ramp_present_ai; empty if not usable."
+training_buildings.csv,ai_amr_can_reach_door,streetview_entrance_labels.csv,Secondary label: the model's holistic judgement that a sidewalk robot could reach the door area.
+training_buildings.csv,ai_model,streetview_entrance_labels.csv,Model snapshot that produced the annotation.
+training_buildings.csv,ai_response_id,streetview_entrance_labels.csv,API response identifier (links to streetview_ai_raw_outputs.jsonl).
+training_buildings.csv,p_accessible,amr_accessibility_predictions.csv,"Primary index: predicted probability that the entrance is accessible under the rule label after the human review of gates and ramps (accessible_rule), from the final logistic model."
+training_buildings.csv,amr_index,amr_accessibility_predictions.csv,100 x p_accessible.
+training_buildings.csv,p_accessible_q05,amr_accessibility_predictions.csv,5th percentile of p_accessible over bootstrap refits (parameter uncertainty only).
+training_buildings.csv,p_accessible_q95,amr_accessibility_predictions.csv,95th percentile of p_accessible over bootstrap refits.
+training_buildings.csv,p_accessible_oof,amr_accessibility_predictions.csv,"Out-of-fold probability from 5-fold CV (only for buildings with a training label). Use this, not p_accessible, to compare with labels."
+training_buildings.csv,p_accessible_ai_only,amr_accessibility_predictions.csv,Alternative index: same model specification trained on the AI-only label (accessible_rule_ai).
+training_buildings.csv,amr_index_ai_only,amr_accessibility_predictions.csv,100 x p_accessible_ai_only.
+training_buildings.csv,p_accessible_ai_only_q05,amr_accessibility_predictions.csv,5th percentile of p_accessible_ai_only over bootstrap refits.
+training_buildings.csv,p_accessible_ai_only_q95,amr_accessibility_predictions.csv,95th percentile of p_accessible_ai_only over bootstrap refits.
+training_buildings.csv,p_accessible_ai_only_oof,amr_accessibility_predictions.csv,Out-of-fold probability of the AI-only index (only for buildings with an AI-only training label).
+training_buildings.csv,in_training_nta,amr_accessibility_predictions.csv,Building lies in one of the seven labelled neighbourhoods.
+training_buildings.csv,categories_seen,amr_accessibility_predictions.csv,Land use and building class each occur >= 5 times among training labels.
+training_buildings.csv,numeric_in_range,amr_accessibility_predictions.csv,All observed numeric predictors within the 1st-99th percentile of the training sample.
+training_buildings.csv,in_domain,amr_accessibility_predictions.csv,in_training_nta AND categories_seen AND numeric_in_range.
+training_buildings.csv,model_version,amr_accessibility_predictions.csv,Version tag of the model specification.
+manhattan_buildings_with_amr_index.csv,bin,all records (join key),Building Identification Number.
+manhattan_buildings_with_amr_index.csv,bbl,manhattan_buildings.csv,Borough-Block-Lot of the tax lot used to join PLUTO (MAPPLUTO_BBL; DOF billing BBL for condominiums).
+manhattan_buildings_with_amr_index.csv,borough,manhattan_buildings.csv,"Borough (always 'Manhattan', i.e. BIN starting with 1; includes Marble Hill)."
+manhattan_buildings_with_amr_index.csv,nta2020,streetview_entrance_labels.csv,2020 NTA code of the building.
+manhattan_buildings_with_amr_index.csv,nta_name,streetview_entrance_labels.csv,2020 NTA name of the building.
+manhattan_buildings_with_amr_index.csv,zipcode,streetview_entrance_labels.csv,ZIP code of the building.
+manhattan_buildings_with_amr_index.csv,zipcode_source,manhattan_buildings.csv,'address_point_same_bin' or 'nearest_address_point_50m' (fallback when the BIN has no address point); empty if unavailable.
+manhattan_buildings_with_amr_index.csv,centroid_lon,manhattan_buildings.csv,Longitude of the area-weighted footprint centroid.
+manhattan_buildings_with_amr_index.csv,centroid_lat,manhattan_buildings.csv,Latitude of the area-weighted footprint centroid.
+manhattan_buildings_with_amr_index.csv,delivery_lon,manhattan_buildings.csv,"Longitude of the delivery point: address point with the same BIN nearest to the centroid, else the centroid."
+manhattan_buildings_with_amr_index.csv,delivery_lat,manhattan_buildings.csv,Latitude of the delivery point.
+manhattan_buildings_with_amr_index.csv,delivery_point_source,manhattan_buildings.csv,'address_point' or 'centroid'.
+manhattan_buildings_with_amr_index.csv,full_address,manhattan_buildings.csv,House number and street of the selected address point.
+manhattan_buildings_with_amr_index.csv,footprint_area_m2,manhattan_buildings.csv,Footprint area computed from the polygon geometry (SHAPE_AREA is not used: it is computed in Web Mercator).
+manhattan_buildings_with_amr_index.csv,construction_year,manhattan_buildings.csv,Year construction was completed; missing where the source reports 0 or null.
+manhattan_buildings_with_amr_index.csv,height_roof_m,manhattan_buildings.csv,"Roof height above ground level (source in feet, converted with 0.3048); missing where the source reports 0."
+manhattan_buildings_with_amr_index.csv,ground_elevation_m,manhattan_buildings.csv,"Lowest elevation at building ground level (source in feet, converted)."
+manhattan_buildings_with_amr_index.csv,numfloors,manhattan_buildings.csv,Number of floors of the tallest building on the tax lot (lot-level attribute repeated for every building on the lot).
+manhattan_buildings_with_amr_index.csv,landuse,manhattan_buildings.csv,PLUTO land-use category code (1-11).
+manhattan_buildings_with_amr_index.csv,landuse_label,manhattan_buildings.csv,Label of the land-use code.
+manhattan_buildings_with_amr_index.csv,bldgclass,manhattan_buildings.csv,"Department of Finance building class (e.g. C4, D1, O5)."
+manhattan_buildings_with_amr_index.csv,bldgclass_group,manhattan_buildings.csv,First letter of bldgclass.
+manhattan_buildings_with_amr_index.csv,bldgclass_group_label,manhattan_buildings.csv,Label of the building class group.
+manhattan_buildings_with_amr_index.csv,lot_units_res,manhattan_buildings.csv,Residential units summed over all buildings on the tax lot (proxy for delivery demand).
+manhattan_buildings_with_amr_index.csv,lot_units_total,manhattan_buildings.csv,Residential and non-residential units summed over all buildings on the tax lot.
+manhattan_buildings_with_amr_index.csv,lot_bldgarea_m2,manhattan_buildings.csv,"Gross floor area of all buildings on the tax lot (source in sq ft, converted)."
+manhattan_buildings_with_amr_index.csv,lot_numbldgs,manhattan_buildings.csv,Number of buildings on the tax lot according to PLUTO.
+manhattan_buildings_with_amr_index.csv,yearalter1,manhattan_buildings.csv,Year of the (second most recent) alteration; missing if never altered (0 in source).
+manhattan_buildings_with_amr_index.csv,yearalter2,manhattan_buildings.csv,Year of the most recent alteration when altered more than once.
+manhattan_buildings_with_amr_index.csv,last_alteration_year,manhattan_buildings.csv,"max(yearalter1, yearalter2). Alterations after 1992 are subject to the ADA Standards."
+manhattan_buildings_with_amr_index.csv,lotfront_m,manhattan_buildings.csv,Tax-lot frontage along the street (source in ft).
+manhattan_buildings_with_amr_index.csv,bldgfront_m,manhattan_buildings.csv,Building frontage along the street (source in ft; building 1 of the lot).
+manhattan_buildings_with_amr_index.csv,bldgdepth_m,manhattan_buildings.csv,Building depth (source in ft; building 1 of the lot).
+manhattan_buildings_with_amr_index.csv,basement_code,manhattan_buildings.csv,"PLUTO BsmtCode: 0 none, 1 above-grade full, 2 below-grade full, 3 above-grade partial, 4 below-grade partial, 5 unknown. Above-grade basements (brownstones, row houses) usually imply a raised first floor and a stoop."
+manhattan_buildings_with_amr_index.csv,proximity_code,manhattan_buildings.csv,"PLUTO ProxCode: 0 not available, 1 detached, 2 semi-attached, 3 attached."
+manhattan_buildings_with_amr_index.csv,in_historic_district,manhattan_buildings.csv,Lot lies in an LPC historic district.
+manhattan_buildings_with_amr_index.csv,historic_district,manhattan_buildings.csv,Name of the LPC historic district.
+manhattan_buildings_with_amr_index.csv,is_landmark,manhattan_buildings.csv,Lot contains an individual and/or interior landmark.
+manhattan_buildings_with_amr_index.csv,landmark_name,manhattan_buildings.csv,Landmark designation text as in PLUTO.
+manhattan_buildings_with_amr_index.csv,pluto_version,manhattan_buildings.csv,PLUTO release used (26v1).
+manhattan_buildings_with_amr_index.csv,distance_to_sidewalk_m,manhattan_buildings.csv,Planar distance from the delivery point to the nearest sidewalk polygon (0 if inside one).
+manhattan_buildings_with_amr_index.csv,distance_to_street_m,manhattan_buildings.csv,"Planar distance from the delivery point to the nearest vehicular street centreline (CSCL: constructed, roadbed type street, excluding non-vehicular segments). Approximates entrance setback from the roadway."
+manhattan_buildings_with_amr_index.csv,n_address_points,manhattan_buildings.csv,Number of address points sharing the BIN (0 = none; >1 often indicates several entrances or a corner building).
+manhattan_buildings_with_amr_index.csv,n_buildings_on_lot,manhattan_buildings.csv,Number of buildings in this table on the same tax lot (BBL). Lot-level PLUTO fields (e.g. numfloors) are shared by all of them.
+manhattan_buildings_with_amr_index.csv,qa_height_floors_inconsistent,manhattan_buildings.csv,Quality flag: single-building lot whose roof height per floor is < 2 m or > 8 m (likely error in height or floors).
+manhattan_buildings_with_amr_index.csv,geom_source,manhattan_buildings.csv,Footprint capture method ('Photogrammetric' or 'Other (Manual)').
+manhattan_buildings_with_amr_index.csv,streetview_image_acquired,manhattan_buildings.csv,A Street View image was downloaded for this building (8 neighbourhoods).
+manhattan_buildings_with_amr_index.csv,in_ai_annotated_sample,manhattan_buildings.csv,The image was annotated by the multimodal model (record streetview_entrance_labels.csv).
+manhattan_buildings_with_amr_index.csv,p_accessible,amr_accessibility_predictions.csv,"Primary index: predicted probability that the entrance is accessible under the rule label after the human review of gates and ramps (accessible_rule), from the final logistic model."
+manhattan_buildings_with_amr_index.csv,amr_index,amr_accessibility_predictions.csv,100 x p_accessible.
+manhattan_buildings_with_amr_index.csv,p_accessible_q05,amr_accessibility_predictions.csv,5th percentile of p_accessible over bootstrap refits (parameter uncertainty only).
+manhattan_buildings_with_amr_index.csv,p_accessible_q95,amr_accessibility_predictions.csv,95th percentile of p_accessible over bootstrap refits.
+manhattan_buildings_with_amr_index.csv,p_accessible_oof,amr_accessibility_predictions.csv,"Out-of-fold probability from 5-fold CV (only for buildings with a training label). Use this, not p_accessible, to compare with labels."
+manhattan_buildings_with_amr_index.csv,p_accessible_ai_only,amr_accessibility_predictions.csv,Alternative index: same model specification trained on the AI-only label (accessible_rule_ai).
+manhattan_buildings_with_amr_index.csv,amr_index_ai_only,amr_accessibility_predictions.csv,100 x p_accessible_ai_only.
+manhattan_buildings_with_amr_index.csv,p_accessible_ai_only_q05,amr_accessibility_predictions.csv,5th percentile of p_accessible_ai_only over bootstrap refits.
+manhattan_buildings_with_amr_index.csv,p_accessible_ai_only_q95,amr_accessibility_predictions.csv,95th percentile of p_accessible_ai_only over bootstrap refits.
+manhattan_buildings_with_amr_index.csv,p_accessible_ai_only_oof,amr_accessibility_predictions.csv,Out-of-fold probability of the AI-only index (only for buildings with an AI-only training label).
+manhattan_buildings_with_amr_index.csv,in_training_nta,amr_accessibility_predictions.csv,Building lies in one of the seven labelled neighbourhoods.
+manhattan_buildings_with_amr_index.csv,categories_seen,amr_accessibility_predictions.csv,Land use and building class each occur >= 5 times among training labels.
+manhattan_buildings_with_amr_index.csv,numeric_in_range,amr_accessibility_predictions.csv,All observed numeric predictors within the 1st-99th percentile of the training sample.
+manhattan_buildings_with_amr_index.csv,in_domain,amr_accessibility_predictions.csv,in_training_nta AND categories_seen AND numeric_in_range.
+manhattan_buildings_with_amr_index.csv,model_version,amr_accessibility_predictions.csv,Version tag of the model specification.
+manhattan_buildings_with_amr_index.csv,image_usable,streetview_entrance_labels.csv,AI: the entrance or its access conditions can be interpreted at least partially.
+manhattan_buildings_with_amr_index.csv,stairs_present,streetview_entrance_labels.csv,AI: visible stairs/steps at or immediately before the entrance (empty if not usable).
+manhattan_buildings_with_amr_index.csv,gate_present,streetview_entrance_labels.csv,Visible gate/fence/barrier at the entrance after the targeted human review (see gate_ramp_source); empty if the image is not usable or the reviewers could not judge it.
+manhattan_buildings_with_amr_index.csv,ramp_present,streetview_entrance_labels.csv,Visible ramp after the targeted human review (see gate_ramp_source); empty as for gate_present.
+manhattan_buildings_with_amr_index.csv,accessible_rule,streetview_entrance_labels.csv,"Primary label (AI + human review): 1 if no gate and (no stairs or ramp present), from stairs_present, gate_present, ramp_present; empty if the image is not usable or the reviewers could not judge it."
+manhattan_buildings_with_amr_index.csv,gate_ramp_source,streetview_entrance_labels.csv,"Origin of gate_present/ramp_present: ai (AI reported neither feature and the image was not drawn as a review control; AI value kept), human_review (targeted review; with two annotators a feature counts if at least one saw it), human_validation_set_a (answers from validation Set A), human_review_not_judgeable (selected for review but the annotators could not judge the entrance; gate, ramp and label left empty). Empty if the image is not usable."
+manhattan_buildings_with_amr_index.csv,gate_present_ai,streetview_entrance_labels.csv,"AI: visible gate/fence/barrier at the entrance, as reported by the model (empty if not usable)."
+manhattan_buildings_with_amr_index.csv,ramp_present_ai,streetview_entrance_labels.csv,"AI: visible ramp, as reported by the model (empty if not usable)."
+manhattan_buildings_with_amr_index.csv,accessible_rule_ai,streetview_entrance_labels.csv,"AI-only label: same rule applied to stairs_present, gate_present_ai, ramp_present_ai; empty if not usable."
+manhattan_buildings_with_amr_index.csv,ai_amr_can_reach_door,streetview_entrance_labels.csv,Secondary label: the model's holistic judgement that a sidewalk robot could reach the door area.

@@ -1,0 +1,17 @@
+column,type,unit,description,source,missing_share
+bin,string,,Building Identification Number.,,0.0
+p_accessible,float,probability,"Primary index: predicted probability that the entrance is accessible under the rule label after the human review of gates and ramps (accessible_rule), from the final logistic model.",this study (model),0.0
+amr_index,float,0-100,100 x p_accessible.,this study (model),0.0
+p_accessible_q05,float,probability,5th percentile of p_accessible over bootstrap refits (parameter uncertainty only).,this study (model),0.0
+p_accessible_q95,float,probability,95th percentile of p_accessible over bootstrap refits.,this study (model),0.0
+p_accessible_oof,float,probability,"Out-of-fold probability from 5-fold CV (only for buildings with a training label). Use this, not p_accessible, to compare with labels.",this study (model),0.8621
+p_accessible_ai_only,float,probability,Alternative index: same model specification trained on the AI-only label (accessible_rule_ai).,this study (model),0.0
+amr_index_ai_only,float,0-100,100 x p_accessible_ai_only.,this study (model),0.0
+p_accessible_ai_only_q05,float,probability,5th percentile of p_accessible_ai_only over bootstrap refits.,this study (model),0.0
+p_accessible_ai_only_q95,float,probability,95th percentile of p_accessible_ai_only over bootstrap refits.,this study (model),0.0
+p_accessible_ai_only_oof,float,probability,Out-of-fold probability of the AI-only index (only for buildings with an AI-only training label).,this study (model),0.8481
+in_training_nta,boolean,,Building lies in one of the seven labelled neighbourhoods.,this study,0.0
+categories_seen,boolean,,Land use and building class each occur >= 5 times among training labels.,this study,0.0
+numeric_in_range,boolean,,All observed numeric predictors within the 1st-99th percentile of the training sample.,this study,0.0
+in_domain,boolean,,in_training_nta AND categories_seen AND numeric_in_range.,this study,0.0
+model_version,string,,Version tag of the model specification.,this study,0.0

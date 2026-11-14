@@ -1,14 +1,9 @@
-pandas
-numpy
-geopandas
-shapely
-pyproj
-openpyxl
-scikit-learn
-joblib
-matplotlib
-seaborn
-folium
-branca
-requests
-python-dotenv
+# Versions used to produce the published records (Python 3.13).
+numpy==2.5.3
+pandas==3.0.5
+scipy==1.18.1
+scikit-learn==1.9.1
+matplotlib==3.11.2
+pytest==9.1.1
+# Only for re-running the Street View / AI acquisition (not needed to use the data):
+# requests is not required; the acquisition scripts use the standard library.

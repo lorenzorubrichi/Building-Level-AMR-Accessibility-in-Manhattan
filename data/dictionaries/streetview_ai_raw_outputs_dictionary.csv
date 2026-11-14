@@ -1,0 +1,13 @@
+column,type,unit,description,source,missing_share
+bin,string,,Building Identification Number.,,0.0
+response_id,string,,API response identifier.,OpenAI API,0.0
+model,string,,Model snapshot.,OpenAI API,0.0
+created_utc,string,ISO 8601 UTC,Response creation time.,OpenAI API,0.0
+status,string,,Response status.,OpenAI API,0.0
+temperature,float,,Sampling temperature reported by the API (default; not set by the client).,OpenAI API,0.0
+top_p,float,,Nucleus sampling parameter reported by the API (default).,OpenAI API,0.0
+reasoning_effort,string,,Reasoning effort reported by the API.,OpenAI API,0.0
+image_detail,string,,Image detail level requested by the client.,client,0.0
+input_tokens,integer,tokens,Input tokens (prompt + image).,OpenAI API,0.0
+output_tokens,integer,tokens,Output tokens.,OpenAI API,0.0
+output_text,string,JSON,Verbatim model output.,OpenAI API,0.0

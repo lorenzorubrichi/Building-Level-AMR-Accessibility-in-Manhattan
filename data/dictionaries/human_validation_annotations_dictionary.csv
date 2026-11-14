@@ -1,0 +1,15 @@
+column,type,unit,description,source,missing_share
+annotator,string,,"Annotator ID (A1 primary, A2 second annotator on the double-annotated subset). Annotators worked independently.",this study,0.0
+task_id,string,,Randomised task identifier (order of presentation).,this study,0.0
+bin,string,,Building Identification Number.,,0.0
+set,string,,"A = image already annotated by the AI; B1 = Upper East Side-Carnegie Hill (no training labels); B2 = labelled neighbourhoods, image never sent to the AI.",validation design,0.0
+stratum,string,,"Sampling stratum (Set A: AI stairs/gate/ramp combination, e.g. STGFRF, or 'unusable'; Set B: B1/B2).",validation design,0.0
+stratum_size,integer,count,Number of images in the stratum population; weight = stratum_size / sampled items in the stratum.,validation design,0.0
+double_annotation,boolean,,Item belongs to the subset annotated by both annotators.,validation design,0.0
+usable,string,yes/no,Human: the entrance of the target building can be judged.,human annotator,0.0
+reason,string,,"Reason when not judgeable (entrance_not_visible, occluded, camera_inside_or_through_window, target_building_ambiguous, image_blank_or_corrupt).",human annotator,0.8037
+stairs,string,yes/no/unsure,Human: stairs or steps between sidewalk and door (empty if not judgeable).,human annotator,0.1963
+gate,string,yes/no/unsure,"Human: gate, fence or barrier to pass to reach the door.",human annotator,0.1963
+ramp,string,yes/no/unsure,Human: ramp or step-free sloped access.,human annotator,0.1963
+robot,string,yes/no/unsure,Human: a robot that cannot climb steps or open gates could reach the door area.,human annotator,0.1963
+comment,string,,Free-text comment.,human annotator,1.0

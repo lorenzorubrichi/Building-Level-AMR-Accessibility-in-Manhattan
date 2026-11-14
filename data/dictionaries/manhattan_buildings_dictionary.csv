@@ -1,0 +1,49 @@
+column,type,unit,description,source,missing_share
+bin,string,,Building Identification Number (NYC DCP). Primary key; joins all records.,Building Footprints,0.0
+bbl,string,,Borough-Block-Lot of the tax lot used to join PLUTO (MAPPLUTO_BBL; DOF billing BBL for condominiums).,Building Footprints,0.0
+borough,string,,"Borough (always 'Manhattan', i.e. BIN starting with 1; includes Marble Hill).",derived,0.0
+nta2020,string,,2020 Neighborhood Tabulation Area code containing the footprint centroid.,2020 NTAs (spatial join),0.0001
+nta_name,string,,2020 Neighborhood Tabulation Area name.,2020 NTAs (spatial join),0.0001
+zipcode,string,,5-digit ZIP code of the address point (see zipcode_source).,Address Points,0.0077
+zipcode_source,string,,'address_point_same_bin' or 'nearest_address_point_50m' (fallback when the BIN has no address point); empty if unavailable.,derived,0.0077
+centroid_lon,float,degrees (WGS84),Longitude of the area-weighted footprint centroid.,Building Footprints (geometry),0.0
+centroid_lat,float,degrees (WGS84),Latitude of the area-weighted footprint centroid.,Building Footprints (geometry),0.0
+delivery_lon,float,degrees (WGS84),"Longitude of the delivery point: address point with the same BIN nearest to the centroid, else the centroid.",Address Points / derived,0.0
+delivery_lat,float,degrees (WGS84),Latitude of the delivery point.,Address Points / derived,0.0
+delivery_point_source,string,,'address_point' or 'centroid'.,derived,0.0
+full_address,string,,House number and street of the selected address point.,Address Points,0.1433
+footprint_area_m2,float,m^2,Footprint area computed from the polygon geometry (SHAPE_AREA is not used: it is computed in Web Mercator).,Building Footprints (geometry),0.0
+construction_year,integer,year,Year construction was completed; missing where the source reports 0 or null.,Building Footprints,0.0153
+height_roof_m,float,m,"Roof height above ground level (source in feet, converted with 0.3048); missing where the source reports 0.",Building Footprints,0.0008
+ground_elevation_m,float,m (NAVD88),"Lowest elevation at building ground level (source in feet, converted).",Building Footprints,0.0009
+numfloors,float,floors,Number of floors of the tallest building on the tax lot (lot-level attribute repeated for every building on the lot).,PLUTO 26v1,0.0157
+landuse,string,code,PLUTO land-use category code (1-11).,PLUTO,0.0022
+landuse_label,string,,Label of the land-use code.,PLUTO data dictionary,0.0022
+bldgclass,string,code,"Department of Finance building class (e.g. C4, D1, O5).",PLUTO,0.0006
+bldgclass_group,string,code,First letter of bldgclass.,derived,0.0006
+bldgclass_group_label,string,,Label of the building class group.,DOF building class glossary,0.0006
+lot_units_res,integer,units,Residential units summed over all buildings on the tax lot (proxy for delivery demand).,PLUTO,0.0006
+lot_units_total,integer,units,Residential and non-residential units summed over all buildings on the tax lot.,PLUTO,0.0006
+lot_bldgarea_m2,float,m^2,"Gross floor area of all buildings on the tax lot (source in sq ft, converted).",PLUTO,0.0006
+lot_numbldgs,integer,count,Number of buildings on the tax lot according to PLUTO.,PLUTO,0.0006
+yearalter1,integer,year,Year of the (second most recent) alteration; missing if never altered (0 in source).,PLUTO,0.4604
+yearalter2,integer,year,Year of the most recent alteration when altered more than once.,PLUTO,0.8988
+last_alteration_year,integer,year,"max(yearalter1, yearalter2). Alterations after 1992 are subject to the ADA Standards.",derived from PLUTO,0.4571
+lotfront_m,float,m,Tax-lot frontage along the street (source in ft).,PLUTO,0.0116
+bldgfront_m,float,m,Building frontage along the street (source in ft; building 1 of the lot).,PLUTO,0.0482
+bldgdepth_m,float,m,Building depth (source in ft; building 1 of the lot).,PLUTO,0.0492
+basement_code,integer,code,"PLUTO BsmtCode: 0 none, 1 above-grade full, 2 below-grade full, 3 above-grade partial, 4 below-grade partial, 5 unknown. Above-grade basements (brownstones, row houses) usually imply a raised first floor and a stoop.",PLUTO,0.0006
+proximity_code,integer,code,"PLUTO ProxCode: 0 not available, 1 detached, 2 semi-attached, 3 attached.",PLUTO,0.0006
+in_historic_district,boolean,,Lot lies in an LPC historic district.,PLUTO,0.0
+historic_district,string,,Name of the LPC historic district.,PLUTO,0.7118
+is_landmark,boolean,,Lot contains an individual and/or interior landmark.,PLUTO,0.0
+landmark_name,string,,Landmark designation text as in PLUTO.,PLUTO,0.968
+pluto_version,string,,PLUTO release used (26v1).,PLUTO,0.0006
+distance_to_sidewalk_m,float,m,Planar distance from the delivery point to the nearest sidewalk polygon (0 if inside one).,Planimetric Sidewalk (derived),0.0
+distance_to_street_m,float,m,"Planar distance from the delivery point to the nearest vehicular street centreline (CSCL: constructed, roadbed type street, excluding non-vehicular segments). Approximates entrance setback from the roadway.",Street Centerline (derived),0.0
+n_address_points,integer,count,Number of address points sharing the BIN (0 = none; >1 often indicates several entrances or a corner building).,Address Points,0.0
+n_buildings_on_lot,integer,count,Number of buildings in this table on the same tax lot (BBL). Lot-level PLUTO fields (e.g. numfloors) are shared by all of them.,derived,0.0
+qa_height_floors_inconsistent,boolean,,Quality flag: single-building lot whose roof height per floor is < 2 m or > 8 m (likely error in height or floors).,derived,0.0
+geom_source,string,,Footprint capture method ('Photogrammetric' or 'Other (Manual)').,Building Footprints,0.0
+streetview_image_acquired,boolean,,A Street View image was downloaded for this building (8 neighbourhoods).,this study,0.0
+in_ai_annotated_sample,boolean,,The image was annotated by the multimodal model (record streetview_entrance_labels.csv).,this study,0.0

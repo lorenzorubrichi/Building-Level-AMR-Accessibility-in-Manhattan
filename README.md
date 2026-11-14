@@ -1,326 +1,205 @@
-# Building-Level AMR Accessibility in Manhattan
+# Building-level entrance accessibility for sidewalk delivery robots in Manhattan
 
-This repository contains the code and datasets used to build a
-building-level last-meter accessibility dataset and estimate autonomous mobile
-robot (AMR) accessibility for buildings in Manhattan, New York City.
+Dataset and code accompanying the Data Descriptor *"A building-level dataset of
+entrance accessibility for sidewalk delivery robots in Manhattan"*.
 
-The project combines open urban datasets, address-point information, Google
-Street View imagery, visual AI assessment, logistic regression, and spatial
-aggregation. The final goal is to estimate whether individual buildings are
-physically accessible to sidewalk delivery robots and to translate those
-building-level estimates into planning-oriented spatial layers.
+**Data Records:** https://doi.org/10.5281/zenodo.24217751 (CC BY 4.0)  
+**Code archive:** https://doi.org/10.5281/zenodo.24218565 (MIT)
 
-## Project Workflow
+The dataset contains three linked layers, all keyed by the Building Identification Number (BIN):
 
-The workflow has five main stages:
+1. **All 44,319 constructed buildings in Manhattan** with attributes from NYC open data.
+2. **6,952 buildings with entrance annotations** (stairs, gate, ramp), extracted from
+   Google Street View images by a multimodal model, with every AI-reported gate or ramp
+   checked by a person, and an accessibility label derived from them.
+3. **A modelled accessibility probability (AMR index) for every building**, with an
+   uncertainty interval and flags that mark where the model extrapolates. Two versions are
+   provided: the primary index (labels after the human review of gates and ramps) and an
+   AI-only index (labels exactly as produced by the AI).
 
-1. Construct a building-level dataset from open urban data.
-2. Select building-level Street View targets and download entrance-oriented
-   images.
-3. Extract AI-derived visual features from Street View imagery.
-4. Train a non-AI logistic regression model and estimate the AMR Accessibility
-   Index.
-5. Aggregate building-level AMR Index values into existing geographic areas,
-   hexagonal cells, and AMR-oriented zones.
+Everything needed to use and reproduce the data is in this repository. No API key and
+no file outside the repository is needed, except for the optional acquisition steps
+described in the last section.
 
-The AI-labeled image sample contains approximately 7,000 buildings. This sample
-is used to train and validate the model. The resulting model is then applied to
-Manhattan buildings using non-visual building and urban attributes.
+Licences: code MIT (`LICENSE`), data CC BY 4.0 (`LICENSE-DATA`).
 
-## Repository Structure
+---
 
-```text
-Github/
-├── data/
-│   ├── raw/                  GitHub-safe raw-data samples and raw-data notes
-│   ├── processed/            Reserved for regenerated processed outputs
-│   └── schema/               Field lists and schema documentation
-├── dataset_pipeline/         Building-level dataset construction scripts
-├── streetview_ai/            Street View target, download, and AI extraction scripts
-├── ai_regression/            AI visual-feature merge scripts
-├── logistic_regression/      Logistic modeling dataset scripts
-├── amr_index_no_ai/          Main AMR Accessibility Index model scripts
-├── zoning/                   Spatial aggregation and AMR-zone scripts
-├── final_datasets/           Final datasets included in this repository
-├── requirements.txt          Python dependencies
-├── .env.example              Local API-key template
-└── README.md
+## 1. I only want the data
+
+The files are in `data/records/`. Each column is described in `data/dictionaries/`:
+type, unit, description, source and share of missing values.
+
+| File | Rows | Content |
+|------|------|---------|
+| `manhattan_buildings.csv` | 44,319 | One row per building: footprint area, height, construction year, PLUTO 26v1 attributes (land use, building class, floors, units, floor area, alterations, frontage, basement and proximity codes, historic district, landmark), delivery point and address, ZIP code, neighbourhood (NTA), distance to sidewalk and to street, quality flags |
+| `streetview_entrance_labels.csv` | 6,952 | One row per annotated building: how the image was requested (camera point, heading, field of view, capture date), quality flags, stairs / gate / ramp after the human review and as reported by the AI (`*_ai`), where each value comes from (`gate_ramp_source`), the two labels `accessible_rule` and `accessible_rule_ai`, the model's own judgement, model version and response ID |
+| `streetview_ai_raw_outputs.jsonl` | 6,952 | The verbatim answer of the AI model for every image, with request metadata |
+| `streetview_ai_prompt.txt` | – | The exact prompt sent with every image |
+| `amr_accessibility_predictions.csv` | 44,319 | Primary index (`p_accessible`, `amr_index` 0–100, 90 % interval, out-of-fold probability), AI-only index (same columns with `_ai_only`), domain-of-applicability flags |
+| `human_validation_annotations.csv` | 800 | Blind human judgements (2 independent annotators) on 700 images, with the sampling design; used for the technical validation |
+| `streetview_gate_ramp_review.csv` | 3,612 | Targeted human review: answers (gate / ramp / both / none / cannot judge) on the 3,012 images where the AI reported a gate or ramp plus 300 controls; 300 images seen by two annotators |
+
+Two ready-made joins of the files above (same values, generated by the pipeline):
+
+| File | Rows | Content |
+|------|------|---------|
+| `manhattan_buildings_with_amr_index.csv` | 44,319 | **Every building with all its attributes and its AMR index**, plus the observed label where one exists |
+| `training_buildings.csv` | 6,733 | **The buildings used to train and validate the models**: all attributes, image metadata, reviewed and AI features, both labels, out-of-fold and final probability of both indices (the primary label is empty for the 622 images the reviewers could not judge) |
+
+`data/dictionaries/joined_tables_dictionary.csv` gives the source record and description of every column of the two joins.
+
+Example (Python):
+
+```python
+import pandas as pd
+ids = {"bin": str, "bbl": str, "zipcode": str}
+b    = pd.read_csv("data/records/manhattan_buildings.csv", dtype=ids)
+lab  = pd.read_csv("data/records/streetview_entrance_labels.csv", dtype=ids)
+pred = pd.read_csv("data/records/amr_accessibility_predictions.csv", dtype=ids)
+df = b.merge(pred, on="bin").merge(lab, on="bin", how="left")   # one table, 44,319 rows
+# or simply: pd.read_csv("data/records/manhattan_buildings_with_amr_index.csv", dtype=ids)
 ```
 
-## Folder Contents
+Street View images are **not** included (Google's terms do not allow redistribution).
+The camera location, heading and field of view in `streetview_entrance_labels.csv`
+are enough to request them again with your own Google API key.
 
-### `data/`
+---
 
-Contains GitHub-safe data files.
+## 2. I want to reproduce the results
 
-- `data/raw/` contains small schema-compatible raw-data samples. The complete
-  raw municipal datasets are not included because several files exceed GitHub
-  size limits.
-- `data/schema/` contains field lists and schema documentation.
-- `data/processed/` is reserved for processed outputs regenerated locally.
-
-To reproduce the full pipeline, replace the sample raw files with the complete
-raw files using the same file names.
-
-### `dataset_pipeline/`
-
-Contains scripts used to build the core building-level dataset from open urban
-data. These scripts combine building footprints, PLUTO property records,
-address points, sidewalk data, and selected geographic boundary files.
-
-Important scripts include:
-
-```text
-buildCompleteDataset.py
-build_final_last_meter_database.py
-build_normalized_nta_keys.py
-Dataset.py
-```
-
-The `archivio/` subfolder contains supporting local geography files used by the
-pipeline, including selected Manhattan buildings, service points, streets, and
-neighborhood boundary files.
-
-### `streetview_ai/`
-
-Contains scripts for preparing Street View image targets, downloading images,
-and extracting AI-derived visual features.
-
-Important scripts include:
-
-```text
-build_building_targets.py
-prepare_streetview_requests.py
-download_streetview_images.py
-extract_visual_features.py
-merge_visual_features.py
-```
-
-The complete Street View image folder is not included because it is larger than
-1 GB. It can be regenerated locally after setting the Google Street View API
-key.
-
-### `ai_regression/`
-
-Contains scripts that merge AI-derived visual features with the building-level
-data. This step produces the AI-labeled image sample used for model training
-and validation.
-
-Important scripts include:
-
-```text
-merge_ai_visual_features.py
-build_ai_subset_map.py
-```
-
-### `logistic_regression/`
-
-Contains scripts for constructing the logistic-regression modeling dataset. The
-target variable is the AI-derived AMR accessibility label, while predictors are
-non-visual building, property, and address attributes.
-
-Important script:
-
-```text
-build_amr_accessibility_logistic_dataset.py
-```
-
-The subfolders `pluto_clustering/` and `within_neighborhood/` contain additional
-exploratory analyses used to evaluate building typologies and within-area
-patterns.
-
-### `amr_index_no_ai/`
-
-Contains the main AMR Accessibility Index model. The selected model is a
-logistic regression trained on the AI-labeled image sample using only non-visual
-building and urban attributes.
-
-Important script:
-
-```text
-train_no_ai_amr_index_models.py
-```
-
-The predicted probability is converted into the building-level AMR Accessibility
-Index:
-
-```text
-AMR Index = 100 * P(AMR-accessible | non-visual building attributes)
-```
-
-### `zoning/`
-
-Contains scripts for spatial aggregation and AMR-oriented zoning. These scripts
-summarize AMR accessibility by existing geographic areas, build hexagonal
-spatial cells, merge adjacent cells into AMR-oriented zones, and evaluate
-alternative spatial aggregation settings.
-
-Important scripts include:
-
-```text
-build_existing_area_amr_index_maps.py
-build_area_level_amr_summary.py
-build_amr_friendly_hex_map.py
-build_amr_friendly_zones.py
-build_amr_zone_level_summary.py
-analyze_hex_zone_sensitivity.py
-analyze_grid_zone_sensitivity.py
-```
-
-### `final_datasets/`
-
-Contains the final datasets retained in the GitHub-ready version of the
-project.
-
-```text
-ai_labeled_buildings_with_visual_features_and_amr_index.csv
-manhattan_buildings_with_estimated_amr_index.csv
-ai_labeled_buildings_dictionary.csv
-```
-
-- `ai_labeled_buildings_with_visual_features_and_amr_index.csv` contains the
-  AI-labeled building sample, AI-derived visual features, and estimated AMR
-  Index fields.
-- `manhattan_buildings_with_estimated_amr_index.csv` contains all Manhattan
-  buildings included in the final application, with estimated AMR accessibility
-  probabilities and AMR Index values.
-- `ai_labeled_buildings_dictionary.csv` provides field descriptions for the
-  AI-labeled sample.
-
-## Installation
-
-Create and activate a Python environment:
+Requirements: Python 3.11 or later (tested with 3.13). About 3 minutes on a laptop.
 
 ```bash
+git clone https://github.com/lorenzorubrichi/Building-Level-AMR-Accessibility-in-Manhattan.git
+cd Building-Level-AMR-Accessibility-in-Manhattan
 python -m venv .venv
-.venv\Scripts\activate
+source .venv/bin/activate          # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
+
+python run_all.py analysis         # model, validation, statistics, figures
+python run_all.py test             # 18 automatic checks; all must pass
 ```
 
-## Environment Variables
+What `python run_all.py analysis` does and writes:
 
-Create a local `.env` file if running the Street View download or visual AI
-steps. Do not commit `.env` to GitHub.
+| Step | Script | Output |
+|------|--------|--------|
+| Compare two predictor sets with spatial cross-validation | `pipeline/b_analysis/15_feature_set_comparison.py` | `results/model/feature_set_comparison.csv` |
+| Fit the model (primary and AI-only index, plus a sensitivity variant), validate it (random, spatial-block, leave-one-ZIP-out, leave-one-neighbourhood-out CV), predict all buildings | `10_model_and_validation.py` | `data/records/amr_accessibility_predictions.csv`, `results/model/metrics.json`, coefficients, calibration |
+| Write the data dictionaries and check them against the files | `14_write_dictionaries.py` | `data/dictionaries/*.csv` |
+| Write the two joined tables | `16_joined_tables.py` | `data/records/manhattan_buildings_with_amr_index.csv`, `data/records/training_buildings.csv` |
+| Score the human validation (AI vs human, human vs human, both indices vs human) and the gate/ramp review | `validation_kit/02_score_annotations.py` | `results/validation/*` |
+| Descriptive statistics and quality checks | `11_dataset_statistics.py` | `results/stats/stats.json` and tables |
+| Figures | `12_figures.py` | `results/figures/*.pdf, *.png` |
+| Numbers and tables used in the manuscript | `13_manuscript_numbers.py` | `manuscript/generated/*.tex` |
 
-```text
-GOOGLE_STREETVIEW_API_KEY=your_google_key_here
-OPENAI_API_KEY=your_openai_key_here
-```
+The pipeline is deterministic: running it again reproduces the published
+`amr_accessibility_predictions.csv` bit for bit.
 
-An empty template is provided in:
-
-```text
-.env.example
-```
-
-## Step-by-Step Execution
-
-Run the scripts from the repository root unless otherwise noted.
-
-### 1. Build the building-level dataset
+### Rebuild the building table from the original NYC data
 
 ```bash
-cd dataset_pipeline
-python buildCompleteDataset.py
-python build_final_last_meter_database.py
+python run_all.py records
 ```
 
-This step creates the building-level dataset by linking open urban datasets at
-the building/BIN level.
+This rebuilds `manhattan_buildings.csv` from `data/source_snapshot/`: the Manhattan
+subset of each NYC Open Data source, as downloaded in 2026, unmodified. Sources, dataset IDs,
+download dates and checksums are in `data/raw/MANIFEST.csv`. A snapshot is used because NYC
+Open Data overwrites its datasets, so a new download would give slightly different numbers.
 
-### 2. Create Street View targets
+To rebuild `streetview_entrance_labels.csv` from the AI outputs as well, the private acquisition
+log is needed (see `data/private/README.md`). Without it, the published label file is kept.
+In both cases the step ends by applying the human review of gates and ramps
+(`07_apply_human_review.py`, which works from the published records alone).
 
-```bash
-cd ../streetview_ai
-python build_building_targets.py
-python prepare_streetview_requests.py
+---
+
+## 3. Repository layout
+
+```
+run_all.py                  single entry point: records | analysis | test | all
+amr_access/                 shared code: paths, geometry, label rule, model, metrics, data dictionaries
+pipeline/a_build_records/   building the records
+    00_make_source_snapshot.py        full NYC downloads -> Manhattan snapshot (authors only)
+    01_build_building_attributes.py   snapshot -> building table
+    02_build_records.py               building table + AI run -> published records
+    03-06_*.py                        Street View acquisition and AI annotation (API keys, costs money)
+    07_apply_human_review.py          gate/ramp review -> final labels (AI values kept in *_ai)
+pipeline/b_analysis/        model, validation, statistics, figures (steps 10-15)
+validation_kit/             blind human validation and gate/ramp review: protocol, offline tools, scorer
+data/records/               the published data
+data/dictionaries/          one data dictionary per record
+data/source_snapshot/       Manhattan subset of every source dataset
+data/raw/MANIFEST.csv       sources, IDs, download dates, SHA-256
+docs/CHANGES_FROM_V0.md     every change from the first public version, with its effect
+tests/                      unit tests and integrity checks of the records
+manuscript/generated/       every number and table reported in the Data Descriptor, regenerated by the pipeline
 ```
 
-This step identifies the building locations used to request Street View images.
+All paths are relative to the repository root, set in `amr_access/config.py`. Two optional
+environment variables point elsewhere: `AMR_RAW_DIR` for full raw downloads and
+`AMR_PRIVATE_DIR` for private acquisition files.
 
-### 3. Download Street View images
+---
 
-```bash
-python download_streetview_images.py
-```
+## 4. Key definitions
 
-This step requires `GOOGLE_STREETVIEW_API_KEY`. The downloaded images are
-generated locally and are not included in this GitHub-ready folder.
+* **`accessible_rule`** (primary label) = no gate **and** (no stairs **or** ramp present),
+  computed for usable images from `stairs_present`, `gate_present`, `ramp_present`.
+  Stairs are as reported by the AI. Gates and ramps were **checked by a person wherever the AI
+  reported one** (the AI over-reports them; see section 5) and on 300 random control images;
+  elsewhere the AI value is kept, because the AI rarely misses them (2 % of controls).
+  `gate_ramp_source` says where each value comes from. Images the reviewers could not judge
+  (622) have an empty label, like unusable images.
+* **`accessible_rule_ai`** (AI-only label): the same rule on the AI values
+  (`gate_present_ai`, `ramp_present_ai`), with no human input.
+* **`ai_amr_can_reach_door`** (secondary label): the AI model's own overall judgement.
+  It agrees with `accessible_rule_ai` on 91 % of images (κ = 0.82).
+* **`p_accessible` / `amr_index`** (primary index): logistic regression on non-visual attributes,
+  trained on `accessible_rule`. **`p_accessible_ai_only` / `amr_index_ai_only`**: the same
+  model trained on `accessible_rule_ai` (identical to the index of release v1.0).
+  Use the primary index unless you specifically want a purely automatic pipeline.
+  To compare predictions with labels, use the out-of-fold columns (`p_accessible_oof`,
+  `p_accessible_ai_only_oof`). `in_domain = False` marks buildings outside the labelled
+  neighbourhoods or outside the range of the training data, where predictions are extrapolations.
 
-### 4. Extract AI-derived visual features
+| Against human judgement on 240 buildings never used to train their own prediction (validation Set B) | Primary index | AI-only index |
+|---|---|---|
+| ROC AUC | 0.845 | 0.813 |
+| Brier score (lower is better) | 0.162 | 0.184 |
+| Mean predicted probability (human share accessible: 0.512) | 0.459 | 0.389 |
 
-```bash
-python extract_visual_features.py
-python merge_visual_features.py
-```
+Difference primary − AI-only (paired bootstrap, 95 % CI): AUC +0.032 (+0.009 to +0.060),
+Brier −0.022 (−0.037 to −0.008). Source: `results/validation/human_validation.json`.
 
-This step requires `OPENAI_API_KEY`. It generates visual features such as image
-usability, visible stairs, visible gates, visible ramps, and AMR door
-reachability.
+## 5. Known limitations
 
-### 5. Merge AI features into the AI-labeled sample
+* The labels describe exterior entrance conditions visible from the street on the image capture
+  date, not doors, intercoms, doormen or indoor access.
+* The labelled buildings come from seven contiguous neighbourhoods. They were annotated in file
+  order until the budget ran out, so they are not a random sample (quantified in `results/stats/`).
+* All PLUTO fields describe the tax lot, not the single building (see `n_buildings_on_lot`).
+* Human validation (`results/validation/human_validation.json`, reproducible with
+  `python validation_kit/02_score_annotations.py`): agreement of the AI with a human annotator is
+  at human level for stairs (κ = 0.78 vs 0.76 between two humans). **The AI over-reports gates**
+  (κ = 0.29, precision 0.29; humans agree with each other, κ = 0.86) **and ramps** (precision 0.09).
+  This motivated the targeted review: only 21 % of the AI-reported gates and 3 % of the ramps were
+  confirmed. Two reviewers agreed on gates on 93 % of the 230 images both could judge (κ = 0.79).
+  Reviewers worked quickly (median about 1 s per image), so subtle gates missed by both cannot be
+  excluded.
+* Stairs were not reviewed (the AI is at human level for them).
+* In the neighbourhood without training labels (Set B1) the primary index still underestimates the
+  share of accessible entrances (mean 0.42 vs 0.51 by human judgement; AI-only index 0.36).
 
-```bash
-cd ../ai_regression
-python merge_ai_visual_features.py
-python build_ai_subset_map.py
-```
+## 6. Optional: acquire new images and annotations (costs money)
 
-This step produces the AI-labeled image sample used for model training and
-validation.
-
-### 6. Build the logistic-regression modeling dataset
-
-```bash
-cd ../logistic_regression
-python build_amr_accessibility_logistic_dataset.py
-```
-
-This step creates the model-ready dataset with the AI-derived accessibility
-label and non-visual predictor variables.
-
-### 7. Train the AMR Accessibility Index model
-
-```bash
-cd ../amr_index_no_ai
-python train_no_ai_amr_index_models.py
-```
-
-This step trains the logistic regression model, evaluates model performance, and
-generates building-level AMR Index estimates.
-
-### 8. Build spatial summaries and AMR-oriented zones
-
-```bash
-cd ../zoning
-python build_area_level_amr_summary.py
-python build_existing_area_amr_index_maps.py
-python build_amr_friendly_hex_map.py
-python build_amr_friendly_zones.py
-python build_amr_zone_level_summary.py
-```
-
-This step aggregates building-level AMR Index values into existing geographic
-areas, hexagonal cells, and aggregated AMR-oriented zones.
-
-### 9. Run sensitivity analysis
-
-```bash
-python analyze_hex_zone_sensitivity.py
-python analyze_grid_zone_sensitivity.py
-```
-
-This step evaluates how hexagon radius and minimum-building thresholds affect
-coverage, within-zone variation, number of zones, and eta squared.
-
-## Reproducing Outputs
-
-Intermediate outputs are intentionally excluded from the GitHub-ready folder.
-Running the workflow scripts will recreate local `output/` folders as needed.
-Generated maps, logs, model diagnostics, temporary files, and full image
-folders should remain local unless selected for publication.
+`pipeline/a_build_records/03`–`06` select buildings, request Street View images and annotate
+them with the pinned model `gpt-5.4-2026-03-05` and the published prompt. Put the keys in a
+`.env` file (template in `.env.example`); they are never written to logs or records.
+Street View imagery and model behaviour change over time, so new results will differ.
 
 ## Citation
 
-If this repository is used in a thesis, paper, or derivative project, cite the
-repository and the original NYC open-data sources used by the pipeline.
+See `CITATION.cff`.
